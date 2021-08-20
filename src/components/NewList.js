@@ -51,6 +51,7 @@ const NewList = () => {
                 setShow(false);
               }
             }}
+            placeholder='Enter list title...'
             autoFocus
           />
           <div className='btn-div'>

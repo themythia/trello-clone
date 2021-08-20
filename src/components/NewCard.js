@@ -45,6 +45,7 @@ const NewCard = ({ column }) => {
           <textarea
             type='text'
             value={input}
+            placeholder='Enter a title for this card...'
             onChange={(e) => setInput(e.target.value)}
             ref={inputField}
             onBlur={() => {
