@@ -10,6 +10,8 @@ import NewList from './NewList';
 
 const App = () => {
   const dispatch = useDispatch();
+  const store = useSelector((store) => store);
+  console.log('store', store);
   const data = useSelector((store) => store.data.demo);
   console.log('data', data);
 

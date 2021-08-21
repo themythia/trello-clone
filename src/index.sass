@@ -37,7 +37,24 @@ h3
   flex-direction: column
   background-color: #ebecf0
   max-height: calc(100vh - 16px)
-  
+  position: relative
+
+  .title-div
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin: 0 8px
+
+    .icon      
+      padding: 8px
+      font-size: 32px
+      border-radius: 3px
+      transition: background-color .2s ease
+      cursor: pointer
+      &:hover
+        background: #ced1da
+        
+
   input
     width: 264px
     height: 32px
@@ -67,6 +84,7 @@ h3
 .card-list
   transition: background-color 0.2s ease
   overflow-y: auto
+  min-height: 1px
 
 .add-new-list-btn
   display: flex
@@ -81,7 +99,6 @@ h3
   cursor: pointer
   color: white
   transition: background-color .2s ease
-
   &:hover
     background: #66afd9
 .add-new-list-menu
@@ -173,3 +190,45 @@ h3
     .transparent
       background-color: transparent
       color: black
+
+.list-menu-div
+  background: white
+  border: 1px solid lightgrey
+  border-radius: 3px
+  width: 280px
+  position: absolute
+  top: 44px
+  left: 230px
+  z-index: 10
+  .list-menu-header
+    margin: 8px 8px
+    display: flex
+    justify-content: flex-end
+    align-items: center
+    border-bottom: 1px solid lightgrey
+    .list-menu-icon   
+      padding: 4px
+      font-size: 32px
+      border-radius: 3px
+      transition: all .2s ease
+      cursor: pointer
+      &:hover
+        transform: scale(1.1)
+
+    span
+      width: 100%
+      text-align: center
+
+  .list-menu-main
+    display: flex
+    flex-direction: column
+
+    span
+      padding: 4px 8px
+      margin-bottom: 4px
+      display: inline-block
+      cursor: pointer
+
+      &:hover
+        background: #ebecf0
+

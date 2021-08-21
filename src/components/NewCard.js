@@ -1,26 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BiPlus } from 'react-icons/bi';
 import { addNewCard } from '../actions/data';
+import { toggleAddCard } from '../actions/menu';
 import { IoClose } from 'react-icons/io5';
 
-const NewCard = ({ column }) => {
-  const [show, setShow] = useState(false);
+const NewCard = ({ column, cardShow }) => {
   const [input, setInput] = useState('');
   const inputField = useRef();
-
   const dispatch = useDispatch();
+  const addCard = useSelector((store) => store.menu[column]?.addCard);
+
+  useEffect(() => {
+    dispatch(toggleAddCard(false, column));
+  }, [column]);
 
   const newCard = () => {
     if (input.length > 0) {
       dispatch(addNewCard(input, column));
       setInput('');
-      setShow(false);
+      // setShow(false);
+      dispatch(toggleAddCard(false, column));
     }
   };
   const reset = () => {
     setInput('');
-    setShow(false);
+    // setShow(false);
+    dispatch(toggleAddCard(false, column));
   };
 
   useEffect(() => {
@@ -36,8 +42,11 @@ const NewCard = ({ column }) => {
 
   return (
     <React.Fragment>
-      {show === false ? (
-        <span className='add-new-card-btn' onClick={() => setShow(true)}>
+      {addCard === false ? (
+        <span
+          className='add-new-card-btn'
+          onClick={() => dispatch(toggleAddCard(true, column))}
+        >
           <BiPlus size={24} /> Add a card
         </span>
       ) : (
@@ -50,7 +59,7 @@ const NewCard = ({ column }) => {
             ref={inputField}
             onBlur={() => {
               if (input.length === 0) {
-                setShow(false);
+                dispatch(toggleAddCard(false, column));
               }
             }}
             autoFocus
