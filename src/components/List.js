@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { changeListTitle } from '../actions/data';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeListTitle, copyList } from '../actions/data';
 import Card from './Card';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import NewCard from './NewCard';
@@ -14,6 +14,10 @@ const List = ({ column, tasks, index }) => {
   const [show, setShow] = useState(false);
   const [input, setInput] = useState('');
   const [menuShow, setMenuShow] = useState(false);
+  console.log('column', column);
+  const demo = useSelector((store) => store.data.demo);
+  console.log('demo', demo);
+  console.log(demo.columns['column-1'].taskIds.map((task) => demo.tasks[task]));
 
   const dispatch = useDispatch();
   const textInput = useRef('');
@@ -89,7 +93,13 @@ const List = ({ column, tasks, index }) => {
                       >
                         Add card...
                       </span>
-                      <span>Copy list...</span>
+                      <span
+                        onClick={() => {
+                          dispatch(copyList(column));
+                        }}
+                      >
+                        Copy list...
+                      </span>
                       <span>Move list...</span>
                       <span>Sort by...</span>
                     </div>

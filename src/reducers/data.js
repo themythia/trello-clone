@@ -4,6 +4,7 @@ import {
   ADD_NEW_LIST,
   CHANGE_LIST_TITLE,
   ADD_NEW_CARD,
+  COPY_LIST,
 } from '../actions/data';
 
 const data = (state = { demo: {}, new: {} }, action) => {
@@ -79,6 +80,60 @@ const data = (state = { demo: {}, new: {} }, action) => {
             },
           },
           taskCount: cardCount + 1,
+        },
+      };
+    case COPY_LIST:
+      if (action.column.taskIds.length === 0) {
+        return {
+          ...state,
+          demo: {
+            ...state.demo,
+            columns: {
+              ...state.demo.columns,
+              [`column-${state.demo.columnOrder.length + 1}`]: {
+                ...action.column,
+                id: `column-${state.demo.columnOrder.length + 1}`,
+              },
+            },
+            columnOrder: [
+              ...state.demo.columnOrder,
+              `column-${state.demo.columnOrder.length + 1}`,
+            ],
+          },
+        };
+      }
+      //creates new tasks with new taskIds in an array
+      const copiedListTasksArray = action.column.taskIds.map((task, index) => ({
+        [`task-${Object.keys(state.demo.tasks).length + index + 1}`]: {
+          id: `task-${Object.keys(state.demo.tasks).length + index + 1}`,
+          content: state.demo.tasks[task].content,
+        },
+      }));
+      //reduces copiedListTasksArray in a new object
+      const copiedListTasks = copiedListTasksArray.reduce((target, current) =>
+        Object.assign(target, current)
+      );
+      //copies state.tasks without mutating the state
+      const stateTasksCopy = Object.assign({}, state.demo.tasks);
+
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: Object.assign(stateTasksCopy, copiedListTasks),
+          columns: {
+            ...state.demo.columns,
+            [`column-${state.demo.columnOrder.length + 1}`]: {
+              ...action.column,
+              id: `column-${state.demo.columnOrder.length + 1}`,
+              taskIds: Object.keys(copiedListTasks),
+            },
+          },
+          columnOrder: [
+            ...state.demo.columnOrder,
+            `column-${state.demo.columnOrder.length + 1}`,
+          ],
+          taskCount: state.demo.taskCount + copiedListTasksArray.length,
         },
       };
     default:
