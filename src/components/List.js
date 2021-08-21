@@ -18,6 +18,7 @@ const List = ({ column, tasks, index }) => {
   const demo = useSelector((store) => store.data.demo);
   console.log('demo', demo);
   console.log(demo.columns['column-1'].taskIds.map((task) => demo.tasks[task]));
+  console.log('index', index);
 
   const dispatch = useDispatch();
   const textInput = useRef('');
@@ -95,7 +96,7 @@ const List = ({ column, tasks, index }) => {
                       </span>
                       <span
                         onClick={() => {
-                          dispatch(copyList(column));
+                          dispatch(copyList(column, index));
                         }}
                       >
                         Copy list...

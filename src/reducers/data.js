@@ -83,6 +83,14 @@ const data = (state = { demo: {}, new: {} }, action) => {
         },
       };
     case COPY_LIST:
+      const newColumnOrder = state.demo.columnOrder.slice();
+      newColumnOrder.splice(
+        1,
+        0,
+        `column-${state.demo.columnOrder.length + 1}`
+      );
+
+      console.log('newColumnOrder', newColumnOrder);
       if (action.column.taskIds.length === 0) {
         return {
           ...state,
@@ -95,10 +103,12 @@ const data = (state = { demo: {}, new: {} }, action) => {
                 id: `column-${state.demo.columnOrder.length + 1}`,
               },
             },
-            columnOrder: [
-              ...state.demo.columnOrder,
-              `column-${state.demo.columnOrder.length + 1}`,
-            ],
+            columnOrder: newColumnOrder,
+
+            // columnOrder: [
+            //   ...state.demo.columnOrder,
+            //   `column-${state.demo.columnOrder.length + 1}`,
+            // ],
           },
         };
       }
@@ -129,10 +139,11 @@ const data = (state = { demo: {}, new: {} }, action) => {
               taskIds: Object.keys(copiedListTasks),
             },
           },
-          columnOrder: [
-            ...state.demo.columnOrder,
-            `column-${state.demo.columnOrder.length + 1}`,
-          ],
+          columnOrder: newColumnOrder,
+          // columnOrder: [
+          //   ...state.demo.columnOrder,
+          //   `column-${state.demo.columnOrder.length + 1}`,
+          // ],
           taskCount: state.demo.taskCount + copiedListTasksArray.length,
         },
       };

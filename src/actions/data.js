@@ -21,4 +21,4 @@ export const addNewCard = (content, listId) => ({
   listId,
 });
 
-export const copyList = (column) => ({ type: COPY_LIST, column });
+export const copyList = (column, index) => ({ type: COPY_LIST, column, index });
