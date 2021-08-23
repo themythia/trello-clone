@@ -7,6 +7,7 @@ import {
   BsTrashFill,
 } from 'react-icons/bs';
 import { FaCopy } from 'react-icons/fa';
+import { changeCardContent } from '../actions/data';
 
 const CardModal = ({ show, onClose, position, task }) => {
   const [height, setHeight] = useState(929);
@@ -46,7 +47,17 @@ const CardModal = ({ show, onClose, position, task }) => {
             autoFocus
             spellCheck={false}
           />
-          <button className='text-save-btn'>Save</button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (input.length > 0 && input !== task.content) {
+                dispatch(changeCardContent(task, input));
+              }
+            }}
+            className='text-save-btn'
+          >
+            Save
+          </button>
         </div>
         <div className='right'>
           <button className='side-btn'>

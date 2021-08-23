@@ -8,6 +8,7 @@ import {
   SORT_LIST,
   DELETE_ALL_CARDS,
   DELETE_LIST,
+  CHANGE_CARD_CONTENT,
 } from '../actions/data';
 
 const data = (
@@ -228,6 +229,20 @@ const data = (
           columnOrder: state.demo.columnOrder.filter(
             (column) => column !== action.column.id
           ),
+        },
+      };
+    case CHANGE_CARD_CONTENT:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: {
+            ...state.demo.tasks,
+            [action.task.id]: {
+              ...state.demo.tasks[action.task.id],
+              content: action.newContent,
+            },
+          },
         },
       };
     default:

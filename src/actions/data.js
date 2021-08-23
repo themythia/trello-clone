@@ -7,6 +7,7 @@ export const COPY_LIST = 'COPY_LIST';
 export const SORT_LIST = 'SORT_LIST';
 export const DELETE_ALL_CARDS = 'DELETE_ALL_CARDS';
 export const DELETE_LIST = 'DELETE_LIST';
+export const CHANGE_CARD_CONTENT = 'CHANGE_CARD_CONTENT';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -35,3 +36,9 @@ export const sortList = (column, sortType) => ({
 export const deleteAllCards = (column) => ({ type: DELETE_ALL_CARDS, column });
 
 export const deleteList = (column) => ({ type: DELETE_LIST, column });
+
+export const changeCardContent = (task, newContent) => ({
+  type: CHANGE_CARD_CONTENT,
+  task,
+  newContent,
+});
