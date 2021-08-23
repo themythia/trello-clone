@@ -42,7 +42,7 @@ const NewCard = ({ column, cardShow }) => {
 
   return (
     <React.Fragment>
-      {addCard === false ? (
+      {addCard !== true ? (
         <span
           className='add-new-card-btn'
           onClick={() => dispatch(toggleAddCard(true, column))}

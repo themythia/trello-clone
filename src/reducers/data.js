@@ -5,9 +5,18 @@ import {
   CHANGE_LIST_TITLE,
   ADD_NEW_CARD,
   COPY_LIST,
+  SORT_LIST,
+  DELETE_ALL_CARDS,
+  DELETE_LIST,
 } from '../actions/data';
 
-const data = (state = { demo: {}, new: {} }, action) => {
+const data = (
+  state = {
+    demo: {},
+    new: { tasks: {}, columns: {}, columnOrder: [], taskCount: 0 },
+  },
+  action
+) => {
   switch (action.type) {
     case RECEIVE_INITIAL_DATA:
       return {
@@ -25,22 +34,21 @@ const data = (state = { demo: {}, new: {} }, action) => {
         },
       };
     case ADD_NEW_LIST:
+      let columnCount = state.demo.columnCount;
       return {
         ...state,
         demo: {
           ...state.demo,
           columns: {
             ...state.demo.columns,
-            [`column-${state.demo.columnOrder.length + 1}`]: {
-              id: `column-${state.demo.columnOrder.length + 1}`,
+            [`column-${columnCount + 1}`]: {
+              id: `column-${columnCount + 1}`,
               title: action.content,
               taskIds: [],
             },
           },
-          columnOrder: [
-            ...state.demo.columnOrder,
-            `column-${state.demo.columnOrder.length + 1}`,
-          ],
+          columnOrder: [...state.demo.columnOrder, `column-${columnCount + 1}`],
+          columnCount: columnCount + 1,
         },
       };
     case CHANGE_LIST_TITLE:
@@ -83,14 +91,14 @@ const data = (state = { demo: {}, new: {} }, action) => {
         },
       };
     case COPY_LIST:
+      let copyListColumnCount = state.demo.columnCount;
       const newColumnOrder = state.demo.columnOrder.slice();
       newColumnOrder.splice(
-        1,
+        action.index,
         0,
-        `column-${state.demo.columnOrder.length + 1}`
+        `column-${copyListColumnCount + 1}`
       );
 
-      console.log('newColumnOrder', newColumnOrder);
       if (action.column.taskIds.length === 0) {
         return {
           ...state,
@@ -98,12 +106,13 @@ const data = (state = { demo: {}, new: {} }, action) => {
             ...state.demo,
             columns: {
               ...state.demo.columns,
-              [`column-${state.demo.columnOrder.length + 1}`]: {
+              [`column-${copyListColumnCount + 1}`]: {
                 ...action.column,
-                id: `column-${state.demo.columnOrder.length + 1}`,
+                id: `column-${copyListColumnCount + 1}`,
               },
             },
             columnOrder: newColumnOrder,
+            columnCount: copyListColumnCount + 1,
 
             // columnOrder: [
             //   ...state.demo.columnOrder,
@@ -145,6 +154,80 @@ const data = (state = { demo: {}, new: {} }, action) => {
           //   `column-${state.demo.columnOrder.length + 1}`,
           // ],
           taskCount: state.demo.taskCount + copiedListTasksArray.length,
+        },
+      };
+    case SORT_LIST:
+      console.log('action.column', action.column);
+      const newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
+      newTaskIds.sort(
+        (a, b) => state.demo.tasks[b].time - state.demo.tasks[a].time
+      );
+      console.log('newTaskIds', newTaskIds);
+
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          columns: {
+            ...state.demo.columns,
+            [action.column.id]: {
+              ...state.demo.columns[action.column.id],
+              taskIds:
+                action.sortType === 'newest'
+                  ? newTaskIds.sort(
+                      (a, b) =>
+                        state.demo.tasks[a].time - state.demo.tasks[b].time
+                    )
+                  : action.sortType === 'oldest'
+                  ? newTaskIds.sort(
+                      (a, b) =>
+                        state.demo.tasks[b].time - state.demo.tasks[a].time
+                    )
+                  : action.sortType === 'abc'
+                  ? newTaskIds.sort(function (a, b) {
+                      if (
+                        state.demo.tasks[a].content <
+                        state.demo.tasks[b].content
+                      ) {
+                        return -1;
+                      }
+                      if (a.firstname > b.firstname) {
+                        return 1;
+                      }
+                      return 0;
+                    })
+                  : newTaskIds,
+            },
+          },
+        },
+      };
+    case DELETE_ALL_CARDS:
+      console.log('DELETE_ALL_CARDS');
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          columns: {
+            ...state.demo.columns,
+            [action.column.id]: {
+              ...state.demo.columns[action.column.id],
+              taskIds: [],
+            },
+          },
+        },
+      };
+    case DELETE_LIST:
+      const newColumns = Object.assign({}, state.demo.columns);
+      delete newColumns[action.column.id];
+
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          columns: newColumns,
+          columnOrder: state.demo.columnOrder.filter(
+            (column) => column !== action.column.id
+          ),
         },
       };
     default:
