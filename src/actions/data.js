@@ -8,6 +8,7 @@ export const SORT_LIST = 'SORT_LIST';
 export const DELETE_ALL_CARDS = 'DELETE_ALL_CARDS';
 export const DELETE_LIST = 'DELETE_LIST';
 export const CHANGE_CARD_CONTENT = 'CHANGE_CARD_CONTENT';
+export const TOGGLE_LABEL = 'TOGGLE_LABEL';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -41,4 +42,10 @@ export const changeCardContent = (task, newContent) => ({
   type: CHANGE_CARD_CONTENT,
   task,
   newContent,
+});
+
+export const toggleLabel = (task, label) => ({
+  type: TOGGLE_LABEL,
+  task,
+  label,
 });

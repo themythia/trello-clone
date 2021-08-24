@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   BsCardText,
@@ -8,33 +8,40 @@ import {
 } from 'react-icons/bs';
 import { FaCopy } from 'react-icons/fa';
 import { changeCardContent } from '../actions/data';
+import CardModalMenu from './CardModalMenu';
+import { toggleCardModal, toggleCardModalMenu } from '../actions/menu';
 
-const CardModal = ({ show, onClose, position, task }) => {
-  const [height, setHeight] = useState(929);
-  const [width, setWidth] = useState(1920);
+const CardModal = ({ show, onClose, task }) => {
   const [input, setInput] = useState(task.content);
+  const showModalMenu = useSelector(
+    (store) => store.menu.tasks[task.id].showCardModalMenu
+  );
+  const position = useSelector((store) => store.menu.tasks[task.id].position);
   const textarea = useRef(null);
-
   const dispatch = useDispatch();
-  console.log('task', task);
 
   useEffect(() => {
-    textarea.current.select();
-    setHeight(window.innerHeight);
-    setWidth(window.innerWidth);
+    textarea.current?.select();
+  }, []);
+
+  const windowSize = useMemo(() => {
+    return {
+      height: window.innerHeight,
+      width: window.innerWidth,
+    };
   }, []);
 
   if (show === false) {
     return null;
   }
-  console.log('position', position);
 
   return (
     <div className='card-modal-div' onClick={onClose}>
       <div
         style={{
-          top: position.top - height / 2 + 80,
-          left: position.left - width / 2 + position.width / 2 + 60,
+          top: position?.top - windowSize.height / 2 + 80,
+          left:
+            position?.left - windowSize.width / 2 + position?.width / 2 + 60,
         }}
         className='card-modal-content'
         onClick={(e) => e.stopPropagation()}
@@ -52,6 +59,7 @@ const CardModal = ({ show, onClose, position, task }) => {
               e.preventDefault();
               if (input.length > 0 && input !== task.content) {
                 dispatch(changeCardContent(task, input));
+                dispatch(toggleCardModal(false, task));
               }
             }}
             className='text-save-btn'
@@ -60,22 +68,53 @@ const CardModal = ({ show, onClose, position, task }) => {
           </button>
         </div>
         <div className='right'>
-          <button className='side-btn'>
+          <button
+            onClick={() => {
+              dispatch(toggleCardModalMenu(true, task, 'card'));
+            }}
+            className='side-btn'
+          >
             <BsCardText size={16} className='side-btn-icon' /> Open card
           </button>
-          <button className='side-btn'>
+          <button
+            onClick={() => {
+              dispatch(toggleCardModalMenu(true, task, 'label'));
+            }}
+            className='side-btn'
+          >
             <BsFillTagFill size={16} className='side-btn-icon' /> Edit labels
           </button>
-          <button className='side-btn'>
+          <button
+            onClick={() => {
+              dispatch(toggleCardModalMenu(true, task, 'cover'));
+            }}
+            className='side-btn'
+          >
             <BsCardImage size={16} className='side-btn-icon' /> Change cover
           </button>
-          <button className='side-btn'>
+          <button
+            onClick={() => {
+              dispatch(toggleCardModalMenu(true, task, 'copy'));
+            }}
+            className='side-btn'
+          >
             <FaCopy size={16} className='side-btn-icon' /> Copy
           </button>
-          <button className='side-btn'>
+          <button
+            onClick={() => {
+              dispatch(toggleCardModalMenu(true, task, 'delete'));
+            }}
+            className='side-btn'
+          >
             <BsTrashFill size={16} className='side-btn-icon' /> Delete
           </button>
         </div>
+        {showModalMenu === true && (
+          <CardModalMenu
+            onClose={() => dispatch(toggleCardModalMenu(false, task))}
+            task={task}
+          />
+        )}
       </div>
     </div>
   );

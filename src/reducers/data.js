@@ -9,6 +9,7 @@ import {
   DELETE_ALL_CARDS,
   DELETE_LIST,
   CHANGE_CARD_CONTENT,
+  TOGGLE_LABEL,
 } from '../actions/data';
 
 const data = (
@@ -77,6 +78,8 @@ const data = (
             [`task-${cardCount + 1}`]: {
               id: `task-${cardCount + 1}`,
               content: action.content,
+              labels: [],
+              time: Date.now(),
             },
           },
           columns: {
@@ -93,6 +96,7 @@ const data = (
       };
     case COPY_LIST:
       let copyListColumnCount = state.demo.columnCount;
+      console.log('copyListColumnCount', copyListColumnCount);
       const newColumnOrder = state.demo.columnOrder.slice();
       newColumnOrder.splice(
         action.index,
@@ -114,11 +118,6 @@ const data = (
             },
             columnOrder: newColumnOrder,
             columnCount: copyListColumnCount + 1,
-
-            // columnOrder: [
-            //   ...state.demo.columnOrder,
-            //   `column-${state.demo.columnOrder.length + 1}`,
-            // ],
           },
         };
       }
@@ -150,19 +149,16 @@ const data = (
             },
           },
           columnOrder: newColumnOrder,
-          // columnOrder: [
-          //   ...state.demo.columnOrder,
-          //   `column-${state.demo.columnOrder.length + 1}`,
-          // ],
+          columnCount: copyListColumnCount + 1,
           taskCount: state.demo.taskCount + copiedListTasksArray.length,
         },
       };
     case SORT_LIST:
       console.log('action.column', action.column);
       const newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
-      newTaskIds.sort(
-        (a, b) => state.demo.tasks[b].time - state.demo.tasks[a].time
-      );
+      // newTaskIds.sort((a, b) => {
+      //   return state.demo.tasks[b].time - state.demo.tasks[a].time;
+      // });
       console.log('newTaskIds', newTaskIds);
 
       return {
@@ -241,6 +237,27 @@ const data = (
             [action.task.id]: {
               ...state.demo.tasks[action.task.id],
               content: action.newContent,
+            },
+          },
+        },
+      };
+    case TOGGLE_LABEL:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: {
+            ...state.demo.tasks,
+            [action.task.id]: {
+              ...state.demo.tasks[action.task.id],
+              labels:
+                state.demo.tasks[action.task.id].labels.find(
+                  (label) => label.id === action.label.id
+                ) === undefined
+                  ? [...state.demo.tasks[action.task.id].labels, action.label]
+                  : state.demo.tasks[action.task.id].labels.filter(
+                      (label) => label !== action.label
+                    ),
             },
           },
         },

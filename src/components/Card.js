@@ -3,12 +3,19 @@ import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import { BsPencil } from 'react-icons/bs';
 import CardModal from './CardModal';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleCardModal, getPosition } from '../actions/menu';
 
 const Card = ({ task, index }) => {
   const [hover, setHover] = useState(false);
-  const [showModal, setShowModal] = useState('false');
   const [position, setPosition] = useState(null);
   const element = useRef('');
+  const dispatch = useDispatch();
+  const showCardModal = useSelector(
+    (store) => store.menu.tasks[task.id].showCardModal
+  );
+  const labels = useSelector((store) => store.data.demo.tasks[task.id].labels);
+  console.log('labels', labels);
 
   useEffect(() => {
     const rect = element.current.getBoundingClientRect();
@@ -21,27 +28,8 @@ const Card = ({ task, index }) => {
       right: rect.right,
       width: rect.width,
     });
-    console.log(rect);
   }, []);
-  // const rect = element.current.getBoundingClientRect();
-  // if (rect && rect.current) {
-  //   console.log(rect);
-  // }
 
-  // example of snapshot object
-
-  // draggable
-  // snapshot = {
-  //   isDragging: true,  --boolean
-  //   draggingOver: 'column-1', -- can be null
-  // }
-
-  //droppable
-  // snapshot = {
-  //   isDraggingOver: true,
-  //   draggingOverWith: 'task-1'
-  // }
-  console.log('hover:', hover);
   return (
     <React.Fragment>
       <Draggable draggableId={task.id} index={index}>
@@ -56,10 +44,25 @@ const Card = ({ task, index }) => {
             isDragging={snapshot.isDragging}
           >
             <div ref={element}>
+              {labels.length > 0 && (
+                <div className='card-label-div'>
+                  {labels.map((label, index) => (
+                    <span
+                      className='card-label'
+                      style={{ background: label.color }}
+                    >
+                      {label.name}
+                    </span>
+                  ))}
+                </div>
+              )}
               {task.content}
               {hover === true && (
                 <BsPencil
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    dispatch(getPosition(task, position));
+                    dispatch(toggleCardModal(true, task));
+                  }}
                   className='card-container-icon'
                 />
               )}
@@ -67,11 +70,10 @@ const Card = ({ task, index }) => {
           </div>
         )}
       </Draggable>
-      {showModal === true && (
+      {showCardModal === true && (
         <CardModal
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          position={position}
+          show={showCardModal}
+          onClose={() => dispatch(toggleCardModal(false, task))}
           task={task}
         />
       )}
