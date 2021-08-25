@@ -9,6 +9,8 @@ export const DELETE_ALL_CARDS = 'DELETE_ALL_CARDS';
 export const DELETE_LIST = 'DELETE_LIST';
 export const CHANGE_CARD_CONTENT = 'CHANGE_CARD_CONTENT';
 export const TOGGLE_LABEL = 'TOGGLE_LABEL';
+export const TOGGLE_CARD_MODAL = 'TOGGLE_CARD_MODAL';
+export const TOGGLE_CARD_MODAL_MENU = 'TOGGLE_CARD_MODAL_MENU';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -48,4 +50,17 @@ export const toggleLabel = (task, label) => ({
   type: TOGGLE_LABEL,
   task,
   label,
+});
+
+export const toggleCardModal = (bool, task) => ({
+  type: TOGGLE_CARD_MODAL,
+  task,
+  bool,
+});
+
+export const toggleCardModalMenu = (bool, task, menuType) => ({
+  type: TOGGLE_CARD_MODAL_MENU,
+  bool,
+  task,
+  menuType,
 });

@@ -10,6 +10,8 @@ import {
   DELETE_LIST,
   CHANGE_CARD_CONTENT,
   TOGGLE_LABEL,
+  TOGGLE_CARD_MODAL,
+  TOGGLE_CARD_MODAL_MENU,
 } from '../actions/data';
 
 const data = (
@@ -80,6 +82,8 @@ const data = (
               content: action.content,
               labels: [],
               time: Date.now(),
+              showCardModal: false,
+              showCardModalMenu: false,
             },
           },
           columns: {
@@ -124,8 +128,8 @@ const data = (
       //creates new tasks with new taskIds in an array
       const copiedListTasksArray = action.column.taskIds.map((task, index) => ({
         [`task-${Object.keys(state.demo.tasks).length + index + 1}`]: {
+          ...state.demo.tasks[task],
           id: `task-${Object.keys(state.demo.tasks).length + index + 1}`,
-          content: state.demo.tasks[task].content,
         },
       }));
       //reduces copiedListTasksArray in a new object
@@ -258,6 +262,35 @@ const data = (
                   : state.demo.tasks[action.task.id].labels.filter(
                       (label) => label !== action.label
                     ),
+            },
+          },
+        },
+      };
+    case TOGGLE_CARD_MODAL:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: {
+            ...state.demo.tasks,
+            [action.task.id]: {
+              ...state.demo.tasks[action.task.id],
+              showCardModal: action.bool,
+            },
+          },
+        },
+      };
+    case TOGGLE_CARD_MODAL_MENU:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: {
+            ...state.demo.tasks,
+            [action.task.id]: {
+              ...state.demo.tasks[action.task.id],
+              showCardModalMenu: action.bool,
+              menuType: action.menuType,
             },
           },
         },

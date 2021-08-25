@@ -9,12 +9,15 @@ import {
 import { FaCopy } from 'react-icons/fa';
 import { changeCardContent } from '../actions/data';
 import CardModalMenu from './CardModalMenu';
-import { toggleCardModal, toggleCardModalMenu } from '../actions/menu';
+import { toggleCardModal, toggleCardModalMenu } from '../actions/data';
 
 const CardModal = ({ show, onClose, task }) => {
   const [input, setInput] = useState(task.content);
+  // const showModalMenu = useSelector(
+  //   (store) => store.menu.tasks[task.id].showCardModalMenu
+  // );
   const showModalMenu = useSelector(
-    (store) => store.menu.tasks[task.id].showCardModalMenu
+    (store) => store.data.demo.tasks[task.id].showCardModalMenu
   );
   const position = useSelector((store) => store.menu.tasks[task.id].position);
   const textarea = useRef(null);
@@ -57,7 +60,7 @@ const CardModal = ({ show, onClose, task }) => {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (input.length > 0 && input !== task.content) {
+              if (input.length > 0) {
                 dispatch(changeCardContent(task, input));
                 dispatch(toggleCardModal(false, task));
               }

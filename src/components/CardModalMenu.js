@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { darken } from 'polished';
 import { FaCheck } from 'react-icons/fa';
 import { toggleLabel } from '../actions/data';
-import { toggleCardModal } from '../actions/menu';
+import { toggleCardModal } from '../actions/data';
 
 const LabelCard = styled.div`
   display: flex;
@@ -33,7 +33,8 @@ const LabelCard = styled.div`
 const CardModalMenu = ({ onClose, task }) => {
   const dispatch = useDispatch();
   const labels = useSelector((store) => store.labels);
-  const type = useSelector((store) => store.menu.tasks[task.id].menuType);
+  // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
+  const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
   return (
     <div className='card-modal-menu-div'>
       <div className='card-modal-menu-header'>

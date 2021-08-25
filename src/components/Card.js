@@ -4,18 +4,21 @@ import { Draggable } from 'react-beautiful-dnd';
 import { BsPencil } from 'react-icons/bs';
 import CardModal from './CardModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleCardModal, getPosition } from '../actions/menu';
+import { getPosition } from '../actions/menu';
+import { toggleCardModal } from '../actions/data';
 
 const Card = ({ task, index }) => {
   const [hover, setHover] = useState(false);
   const [position, setPosition] = useState(null);
   const element = useRef('');
   const dispatch = useDispatch();
+  // const showCardModal = useSelector(
+  //   (store) => store.menu.tasks[task.id].showCardModal
+  // );
   const showCardModal = useSelector(
-    (store) => store.menu.tasks[task.id].showCardModal
+    (store) => store.data.demo.tasks[task.id].showCardModal
   );
   const labels = useSelector((store) => store.data.demo.tasks[task.id].labels);
-  console.log('labels', labels);
 
   useEffect(() => {
     const rect = element.current.getBoundingClientRect();
