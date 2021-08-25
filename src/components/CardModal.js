@@ -10,6 +10,7 @@ import { FaCopy } from 'react-icons/fa';
 import { changeCardContent } from '../actions/data';
 import CardModalMenu from './CardModalMenu';
 import { toggleCardModal, toggleCardModalMenu } from '../actions/data';
+import { toggleEditLabel } from '../actions/labels';
 
 const CardModal = ({ show, onClose, task }) => {
   const [input, setInput] = useState(task.content);
@@ -19,6 +20,10 @@ const CardModal = ({ show, onClose, task }) => {
   const showModalMenu = useSelector(
     (store) => store.data.demo.tasks[task.id].showCardModalMenu
   );
+  const editLabel = useSelector((store) =>
+    store.labels.find((label) => label.edit === true)
+  );
+
   const position = useSelector((store) => store.menu.tasks[task.id].position);
   const textarea = useRef(null);
   const dispatch = useDispatch();
@@ -114,7 +119,10 @@ const CardModal = ({ show, onClose, task }) => {
         </div>
         {showModalMenu === true && (
           <CardModalMenu
-            onClose={() => dispatch(toggleCardModalMenu(false, task))}
+            onClose={() => {
+              dispatch(toggleEditLabel(editLabel?.id, false));
+              dispatch(toggleCardModalMenu(false, task));
+            }}
             task={task}
           />
         )}

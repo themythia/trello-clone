@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { BsPencil } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { darken } from 'polished';
+import { darken, lighten } from 'polished';
 import { FaCheck } from 'react-icons/fa';
-import { toggleLabel } from '../actions/data';
-import { toggleCardModal } from '../actions/data';
+import { toggleLabel, changeCardModalMenuType } from '../actions/data';
+import { AiOutlineLeft } from 'react-icons/ai';
+import { toggleEditLabel, editLabel as editLabelFunc } from '../actions/labels';
 
 const LabelCard = styled.div`
   display: flex;
@@ -30,52 +31,163 @@ const LabelCard = styled.div`
   }
 `;
 
+const LabelColorPicker = styled.span`
+  display: inline-block;
+  width: 48px;
+  height: 32px;
+  margin: 0 8px 8px 0;
+  background: ${(props) => props.background};
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  text-align: center;
+  line-height: 32px;
+  border-radius: 4px;
+  flex-basis: 48px;
+  &:hover {
+    background: ${(props) => lighten(0.1, props.background)};
+  }
+  &:nth-of-type(5n) {
+    margin-right: 0;
+  }
+`;
+
 const CardModalMenu = ({ onClose, task }) => {
   const dispatch = useDispatch();
   const labels = useSelector((store) => store.labels);
+  const [colorSelected, setColorSelected] = useState(null);
+  const editLabel = useSelector((store) =>
+    store.labels.find((label) => label.edit === true)
+  );
   // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
   const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+
+  const [input, setInput] = useState(editLabel?.name ? editLabel.name : '');
+  const colors = [
+    '#61bd4f',
+    '#f2d600',
+    '#ff9f1a',
+    '#eb5a46',
+    '#c377e0',
+    '#0079bf',
+    '#00c2e0',
+    '#51e898',
+    '#ff78cb',
+    '#344563',
+  ];
+
+  useEffect(() => {
+    if (editLabel !== undefined && colorSelected === null) {
+      setColorSelected(editLabel.color);
+    }
+  }, [editLabel, colorSelected]);
+  console.log('labels:', labels);
+
   return (
     <div className='card-modal-menu-div'>
-      <div className='card-modal-menu-header'>
-        {type === 'label' && <span>Labels</span>}
-        <IoClose className='card-modal-menu-icon' onClick={onClose} />
-      </div>
-      <div className='card-modal-menu-main'>
-        <h6>LABELS</h6>
-        <ul>
-          {labels.map((label) => (
-            <li key={label.id}>
-              <LabelCard
-                background={label.color}
-                onClick={() => {
-                  dispatch(toggleLabel(task, label));
-                }}
-              >
-                <span
-                  style={{
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    maxWidth: '190px',
-                  }}
+      {type === 'label' && (
+        <React.Fragment>
+          <div className='card-modal-menu-header'>
+            <span>Labels</span>
+            <IoClose className='card-modal-menu-icon' onClick={onClose} />
+          </div>
+          <div className='card-modal-menu-main'>
+            <h6>LABELS</h6>
+            <ul>
+              {labels.map((label, index) => (
+                <li key={index}>
+                  <LabelCard
+                    background={label.color}
+                    onClick={() => {
+                      dispatch(toggleLabel(task, label));
+                    }}
+                  >
+                    <span
+                      style={{
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        maxWidth: '190px',
+                      }}
+                    >
+                      {label.name}
+                    </span>
+                    {task.labels?.find(
+                      (mapLabel) => mapLabel.id === label.id
+                    ) && <FaCheck />}
+                  </LabelCard>
+                  <div
+                    onClick={() => {
+                      dispatch(toggleEditLabel(label.id, true));
+                      dispatch(changeCardModalMenuType(task, 'label-menu'));
+                    }}
+                    className='edit-button'
+                  >
+                    <BsPencil className='label-card-edit-icon' size={14} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='card-modal-menu-footer'>
+            <button className='create-new-label-btn'>Create a new label</button>
+          </div>
+        </React.Fragment>
+      )}
+      {type === 'label-menu' && editLabel !== undefined && (
+        <React.Fragment>
+          <div className='card-modal-menu-header'>
+            <AiOutlineLeft
+              onClick={() => {
+                dispatch(toggleEditLabel(editLabel.id, false));
+                dispatch(changeCardModalMenuType(task, 'label'));
+              }}
+              className='card-modal-menu-icon'
+            />
+            <span>Change label</span>
+            <IoClose className='card-modal-menu-icon' onClick={onClose} />
+          </div>
+          <div className='card-modal-menu-main no-border-bottom'>
+            <label htmlFor='text-input'>
+              <h6>Name</h6>
+            </label>
+            <input
+              type='text'
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              id='text-input'
+            />
+            <h6>Select a color</h6>
+            <div className='color-select-div'>
+              {colors.map((color, index) => (
+                <LabelColorPicker
+                  key={index}
+                  background={color}
+                  onClick={() => setColorSelected(color)}
                 >
-                  {label.name}
-                </span>
-                {task.labels?.find((mapLabel) => mapLabel.id === label.id) && (
-                  <FaCheck />
-                )}
-              </LabelCard>
-              <div className='edit-button'>
-                <BsPencil className='label-card-edit-icon' size={14} />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className='card-modal-menu-footer'>
-        <button className='create-new-label-btn'>Create a new label</button>
-      </div>
+                  {colorSelected === color && (
+                    <FaCheck style={{ verticalAlign: 'middle' }} />
+                  )}
+                </LabelColorPicker>
+              ))}
+            </div>
+            <div className='card-modal-menu-buttons'>
+              <button
+                onClick={() => {
+                  if (input.length > 0) {
+                    dispatch(editLabelFunc(editLabel.id, input, colorSelected));
+                    dispatch(changeCardModalMenuType(task, 'label'));
+                  }
+                }}
+                className='btn-primary'
+              >
+                Save
+              </button>
+              <button className='btn-danger'>Delete</button>
+            </div>
+          </div>
+        </React.Fragment>
+      )}
     </div>
   );
 };

@@ -24,7 +24,6 @@ export const toggleCardModalMenu = (bool, task, menuType) => ({
 });
 
 export const getPosition = (task, position) => {
-  console.log('GET POSITION RUNNING');
   return {
     type: GET_POSITION,
     task,

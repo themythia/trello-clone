@@ -5,20 +5,29 @@ import { BsPencil } from 'react-icons/bs';
 import CardModal from './CardModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { getPosition } from '../actions/menu';
-import { toggleCardModal } from '../actions/data';
+import {
+  changeCardModalMenuType,
+  toggleCardModal,
+  toggleCardModalMenu,
+} from '../actions/data';
+import { toggleEditLabel } from '../actions/labels';
 
 const Card = ({ task, index }) => {
   const [hover, setHover] = useState(false);
   const [position, setPosition] = useState(null);
   const element = useRef('');
   const dispatch = useDispatch();
-  // const showCardModal = useSelector(
-  //   (store) => store.menu.tasks[task.id].showCardModal
-  // );
+  const editLabel = useSelector((store) =>
+    store.labels.find((label) => label.edit === true)
+  );
+
   const showCardModal = useSelector(
     (store) => store.data.demo.tasks[task.id].showCardModal
   );
-  const labels = useSelector((store) => store.data.demo.tasks[task.id].labels);
+  const taskLabels = useSelector(
+    (store) => store.data.demo.tasks[task.id].labels
+  );
+  const labels = useSelector((store) => store.labels);
 
   useEffect(() => {
     const rect = element.current.getBoundingClientRect();
@@ -49,14 +58,20 @@ const Card = ({ task, index }) => {
             <div ref={element}>
               {labels.length > 0 && (
                 <div className='card-label-div'>
-                  {labels.map((label, index) => (
-                    <span
-                      className='card-label'
-                      style={{ background: label.color }}
-                    >
-                      {label.name}
-                    </span>
-                  ))}
+                  {taskLabels.map((taskLabel, index) => {
+                    const updatedLabel = labels.find(
+                      (label) => label.id === taskLabel.id
+                    );
+                    return (
+                      <span
+                        key={index}
+                        className='card-label'
+                        style={{ background: updatedLabel.color }}
+                      >
+                        {updatedLabel.name}
+                      </span>
+                    );
+                  })}
                 </div>
               )}
               {task.content}
@@ -76,7 +91,11 @@ const Card = ({ task, index }) => {
       {showCardModal === true && (
         <CardModal
           show={showCardModal}
-          onClose={() => dispatch(toggleCardModal(false, task))}
+          onClose={() => {
+            dispatch(toggleCardModal(false, task));
+            dispatch(toggleCardModalMenu(false, task, 'label'));
+            dispatch(toggleEditLabel(editLabel?.id, false));
+          }}
           task={task}
         />
       )}

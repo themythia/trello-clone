@@ -11,6 +11,7 @@ export const CHANGE_CARD_CONTENT = 'CHANGE_CARD_CONTENT';
 export const TOGGLE_LABEL = 'TOGGLE_LABEL';
 export const TOGGLE_CARD_MODAL = 'TOGGLE_CARD_MODAL';
 export const TOGGLE_CARD_MODAL_MENU = 'TOGGLE_CARD_MODAL_MENU';
+export const CHANGE_CARD_MODAL_MENU_TYPE = 'CHANGE_CARD_MODAL_MENU_TYPE';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -61,6 +62,12 @@ export const toggleCardModal = (bool, task) => ({
 export const toggleCardModalMenu = (bool, task, menuType) => ({
   type: TOGGLE_CARD_MODAL_MENU,
   bool,
+  task,
+  menuType,
+});
+
+export const changeCardModalMenuType = (task, menuType) => ({
+  type: CHANGE_CARD_MODAL_MENU_TYPE,
   task,
   menuType,
 });

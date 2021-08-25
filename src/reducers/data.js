@@ -12,6 +12,7 @@ import {
   TOGGLE_LABEL,
   TOGGLE_CARD_MODAL,
   TOGGLE_CARD_MODAL_MENU,
+  CHANGE_CARD_MODAL_MENU_TYPE,
 } from '../actions/data';
 
 const data = (
@@ -260,7 +261,7 @@ const data = (
                 ) === undefined
                   ? [...state.demo.tasks[action.task.id].labels, action.label]
                   : state.demo.tasks[action.task.id].labels.filter(
-                      (label) => label !== action.label
+                      (label) => label.id !== action.label.id
                     ),
             },
           },
@@ -290,6 +291,20 @@ const data = (
             [action.task.id]: {
               ...state.demo.tasks[action.task.id],
               showCardModalMenu: action.bool,
+              menuType: action.menuType,
+            },
+          },
+        },
+      };
+    case CHANGE_CARD_MODAL_MENU_TYPE:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: {
+            ...state.demo.tasks,
+            [action.task.id]: {
+              ...state.demo.tasks[action.task.id],
               menuType: action.menuType,
             },
           },
