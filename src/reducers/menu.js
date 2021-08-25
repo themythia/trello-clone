@@ -3,6 +3,7 @@ import {
   TOGGLE_CARD_MODAL,
   TOGGLE_CARD_MODAL_MENU,
   GET_POSITION,
+  TOGGLE_LABEL_SIZE,
 } from '../actions/menu';
 const defaultState = {
   tasks: {
@@ -35,6 +36,7 @@ const defaultState = {
       showCardModalMenu: false,
     },
   },
+  miniLabel: false,
 };
 const menu = (state = defaultState, action) => {
   switch (action.type) {
@@ -78,6 +80,11 @@ const menu = (state = defaultState, action) => {
             position: action.position,
           },
         },
+      };
+    case TOGGLE_LABEL_SIZE:
+      return {
+        ...state,
+        miniLabel: state.miniLabel === false ? true : false,
       };
     default:
       return state;
