@@ -5,9 +5,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { darken, lighten } from 'polished';
 import { FaCheck } from 'react-icons/fa';
-import { toggleLabel, changeCardModalMenuType } from '../actions/data';
+import {
+  toggleLabel,
+  changeCardModalMenuType,
+  deleteLabelFromTask,
+} from '../actions/data';
 import { AiOutlineLeft } from 'react-icons/ai';
-import { toggleEditLabel, editLabel as editLabelFunc } from '../actions/labels';
+import {
+  toggleEditLabel,
+  editLabel as editLabelFunc,
+  createLabel,
+} from '../actions/labels';
 
 const LabelCard = styled.div`
   display: flex;
@@ -59,8 +67,11 @@ const CardModalMenu = ({ onClose, task }) => {
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
+
+  console.log('editLabel', editLabel);
   // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
   const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+  console.log('type', type);
 
   const [input, setInput] = useState(editLabel?.name ? editLabel.name : '');
   const colors = [
@@ -119,7 +130,7 @@ const CardModalMenu = ({ onClose, task }) => {
                   <div
                     onClick={() => {
                       dispatch(toggleEditLabel(label.id, true));
-                      dispatch(changeCardModalMenuType(task, 'label-menu'));
+                      dispatch(changeCardModalMenuType(task, 'edit-label'));
                     }}
                     className='edit-button'
                   >
@@ -130,21 +141,36 @@ const CardModalMenu = ({ onClose, task }) => {
             </ul>
           </div>
           <div className='card-modal-menu-footer'>
-            <button className='create-new-label-btn'>Create a new label</button>
+            <button
+              onClick={() =>
+                dispatch(changeCardModalMenuType(task, 'create-label'))
+              }
+              className='create-new-label-btn'
+            >
+              Create a new label
+            </button>
           </div>
         </React.Fragment>
       )}
-      {type === 'label-menu' && editLabel !== undefined && (
+      {(type === 'edit-label' || type === 'create-label') && (
         <React.Fragment>
           <div className='card-modal-menu-header'>
             <AiOutlineLeft
               onClick={() => {
-                dispatch(toggleEditLabel(editLabel.id, false));
+                if (type === 'edit-label') {
+                  dispatch(toggleEditLabel(editLabel.id, false));
+                }
                 dispatch(changeCardModalMenuType(task, 'label'));
               }}
               className='card-modal-menu-icon'
             />
-            <span>Change label</span>
+            <span>
+              {type === 'edit-label'
+                ? 'Change label'
+                : type === 'create-label'
+                ? 'Create label'
+                : null}
+            </span>
             <IoClose className='card-modal-menu-icon' onClick={onClose} />
           </div>
           <div className='card-modal-menu-main no-border-bottom'>
@@ -175,15 +201,46 @@ const CardModalMenu = ({ onClose, task }) => {
               <button
                 onClick={() => {
                   if (input.length > 0) {
-                    dispatch(editLabelFunc(editLabel.id, input, colorSelected));
+                    if (type === 'edit-label') {
+                      dispatch(
+                        editLabelFunc(editLabel.id, input, colorSelected)
+                      );
+                    }
+                    if (type === 'create-label') {
+                      const ID = () =>
+                        '_' + Math.random().toString(36).substr(2, 9);
+                      const id = ID();
+                      dispatch(
+                        createLabel({
+                          id,
+                          name: input,
+                          color: colorSelected,
+                          edit: false,
+                        })
+                      );
+                    }
                     dispatch(changeCardModalMenuType(task, 'label'));
                   }
                 }}
                 className='btn-primary'
               >
-                Save
+                {type === 'edit-label'
+                  ? `Save`
+                  : type === 'create-label'
+                  ? 'Create'
+                  : null}
               </button>
-              <button className='btn-danger'>Delete</button>
+              {type === 'edit-label' && (
+                <button
+                  onClick={() => {
+                    dispatch(deleteLabelFromTask(editLabel.id));
+                    dispatch(changeCardModalMenuType(task, 'label'));
+                  }}
+                  className='btn-danger'
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </div>
         </React.Fragment>

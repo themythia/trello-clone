@@ -12,6 +12,7 @@ export const TOGGLE_LABEL = 'TOGGLE_LABEL';
 export const TOGGLE_CARD_MODAL = 'TOGGLE_CARD_MODAL';
 export const TOGGLE_CARD_MODAL_MENU = 'TOGGLE_CARD_MODAL_MENU';
 export const CHANGE_CARD_MODAL_MENU_TYPE = 'CHANGE_CARD_MODAL_MENU_TYPE';
+export const DELETE_LABEL = 'DELETE_LABEL';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -70,4 +71,9 @@ export const changeCardModalMenuType = (task, menuType) => ({
   type: CHANGE_CARD_MODAL_MENU_TYPE,
   task,
   menuType,
+});
+
+export const deleteLabelFromTask = (labelId) => ({
+  type: DELETE_LABEL,
+  labelId,
 });

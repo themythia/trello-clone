@@ -13,6 +13,7 @@ import {
   TOGGLE_CARD_MODAL,
   TOGGLE_CARD_MODAL_MENU,
   CHANGE_CARD_MODAL_MENU_TYPE,
+  DELETE_LABEL,
 } from '../actions/data';
 
 const data = (
@@ -308,6 +309,20 @@ const data = (
               menuType: action.menuType,
             },
           },
+        },
+      };
+    case DELETE_LABEL:
+      const copyTasks = Object.assign({}, state.demo.tasks);
+      for (const task in copyTasks) {
+        copyTasks[task].labels = copyTasks[task].labels.filter(
+          (label) => label.id !== action.labelId
+        );
+      }
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          tasks: copyTasks,
         },
       };
     default:
