@@ -4,6 +4,7 @@ import {
   TOGGLE_CARD_MODAL_MENU,
   GET_POSITION,
   TOGGLE_LABEL_SIZE,
+  GET_SEARCH_INPUT,
 } from '../actions/menu';
 const defaultState = {
   tasks: {
@@ -37,6 +38,7 @@ const defaultState = {
     },
   },
   miniLabel: false,
+  searchInput: '',
 };
 const menu = (state = defaultState, action) => {
   switch (action.type) {
@@ -85,6 +87,11 @@ const menu = (state = defaultState, action) => {
       return {
         ...state,
         miniLabel: state.miniLabel === false ? true : false,
+      };
+    case GET_SEARCH_INPUT:
+      return {
+        ...state,
+        searchInput: action.input,
       };
     default:
       return state;

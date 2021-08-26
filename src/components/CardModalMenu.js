@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { BsPencil } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +16,7 @@ import {
   editLabel as editLabelFunc,
   createLabel,
 } from '../actions/labels';
+import { getSearchInput } from '../actions/menu';
 
 const LabelCard = styled.div`
   display: flex;
@@ -67,11 +68,13 @@ const CardModalMenu = ({ onClose, task }) => {
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
+  const searchInput = useSelector((store) => store.menu.searchInput);
+  const regex = new RegExp(`(${searchInput})`, 'i');
+  console.log('searchInput', searchInput);
+  const searchInputRef = useRef(null);
 
-  console.log('editLabel', editLabel);
   // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
   const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
-  console.log('type', type);
 
   const [input, setInput] = useState(editLabel?.name ? editLabel.name : '');
   const colors = [
@@ -92,7 +95,6 @@ const CardModalMenu = ({ onClose, task }) => {
       setColorSelected(editLabel.color);
     }
   }, [editLabel, colorSelected]);
-  console.log('labels:', labels);
 
   return (
     <div className='card-modal-menu-div'>
@@ -103,41 +105,54 @@ const CardModalMenu = ({ onClose, task }) => {
             <IoClose className='card-modal-menu-icon' onClick={onClose} />
           </div>
           <div className='card-modal-menu-main'>
+            <input
+              type='search'
+              placeholder='Search labels...'
+              value={searchInput}
+              ref={searchInputRef}
+              autoFocus
+              onChange={(e) => {
+                dispatch(getSearchInput(e.target.value));
+              }}
+            />
             <h6>LABELS</h6>
             <ul>
-              {labels.map((label, index) => (
-                <li key={index}>
-                  <LabelCard
-                    background={label.color}
-                    onClick={() => {
-                      dispatch(toggleLabel(task, label));
-                    }}
-                  >
-                    <span
-                      style={{
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        maxWidth: '190px',
+              {/* {labels.filter((label) => regex.test(label.content))} */}
+              {labels
+                .filter((label) => regex.test(label.name) === true)
+                .map((label, index) => (
+                  <li key={index}>
+                    <LabelCard
+                      background={label.color}
+                      onClick={() => {
+                        dispatch(toggleLabel(task, label));
                       }}
                     >
-                      {label.name}
-                    </span>
-                    {task.labels?.find(
-                      (mapLabel) => mapLabel.id === label.id
-                    ) && <FaCheck />}
-                  </LabelCard>
-                  <div
-                    onClick={() => {
-                      dispatch(toggleEditLabel(label.id, true));
-                      dispatch(changeCardModalMenuType(task, 'edit-label'));
-                    }}
-                    className='edit-button'
-                  >
-                    <BsPencil className='label-card-edit-icon' size={14} />
-                  </div>
-                </li>
-              ))}
+                      <span
+                        style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          maxWidth: '190px',
+                        }}
+                      >
+                        {label.name}
+                      </span>
+                      {task.labels?.find(
+                        (mapLabel) => mapLabel.id === label.id
+                      ) && <FaCheck />}
+                    </LabelCard>
+                    <div
+                      onClick={() => {
+                        dispatch(toggleEditLabel(label.id, true));
+                        dispatch(changeCardModalMenuType(task, 'edit-label'));
+                      }}
+                      className='edit-button'
+                    >
+                      <BsPencil className='label-card-edit-icon' size={14} />
+                    </div>
+                  </li>
+                ))}
             </ul>
           </div>
           <div className='card-modal-menu-footer'>

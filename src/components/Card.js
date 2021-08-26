@@ -4,7 +4,7 @@ import { Draggable, useMouseSensor } from 'react-beautiful-dnd';
 import { BsPencil } from 'react-icons/bs';
 import CardModal from './CardModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { getPosition, miniLabel } from '../actions/menu';
+import { getPosition, getSearchInput, miniLabel } from '../actions/menu';
 import {
   changeCardModalMenuType,
   toggleCardModal,
@@ -144,6 +144,7 @@ const Card = ({ task, index }) => {
         <CardModal
           show={showCardModal}
           onClose={() => {
+            // dispatch(getSearchInput(''));
             dispatch(toggleCardModal(false, task));
             dispatch(toggleCardModalMenu(false, task, 'label'));
             dispatch(toggleEditLabel(editLabel?.id, false));

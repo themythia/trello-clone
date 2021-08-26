@@ -20,6 +20,8 @@ const CardModal = ({ show, onClose, task }) => {
   const showModalMenu = useSelector(
     (store) => store.data.demo.tasks[task.id].showCardModalMenu
   );
+  const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+  console.log('type', type);
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
@@ -29,7 +31,9 @@ const CardModal = ({ show, onClose, task }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    textarea.current?.select();
+    if (type === undefined) {
+      textarea.current?.select();
+    }
   }, []);
 
   const windowSize = useMemo(() => {
@@ -59,7 +63,6 @@ const CardModal = ({ show, onClose, task }) => {
             ref={textarea}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            autoFocus
             spellCheck={false}
           />
           <button
