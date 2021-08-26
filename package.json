@@ -1,7 +1,8 @@
 {
   "name": "trello-clone",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://emir.al/trello-clone/",
+  "private": false,
   "dependencies": {
     "@atlaskit/css-reset": "^6.1.2",
     "@testing-library/jest-dom": "^5.14.1",
