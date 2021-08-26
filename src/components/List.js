@@ -28,7 +28,7 @@ const List = ({ column, tasks, index }) => {
   const listMenu = useRef(null);
   const InnerList = React.memo(function InnerList({ tasks }) {
     return tasks.map((task, index) => (
-      <Card key={task.id} task={task} index={index} />
+      <Card key={task.id} task={task} index={index} column={column} />
     ));
   });
 

@@ -16,7 +16,7 @@ import {
   editLabel as editLabelFunc,
   createLabel,
 } from '../actions/labels';
-import { getSearchInput } from '../actions/menu';
+import { getSearchInput, toggleCardModalMenu } from '../actions/menu';
 
 const LabelCard = styled.div`
   display: flex;
@@ -61,6 +61,44 @@ const LabelColorPicker = styled.span`
   }
 `;
 
+const SizeBtn = styled.div`
+  border-radius: 4px;
+  border: 1px solid lightgrey;
+  height: 64px;
+  width: 136px;
+  display: flex;
+  flex-direction: column;
+  display: relative;
+  z-index: 1;
+`;
+
+const SizeBtnTop = styled.div`
+  height: ${(props) => (props.size === 'small' ? '28px' : '100%')};
+  position: relative;
+  z-index: ${(props) => (props.size === 'small' ? '1' : '-10')};
+  background: ${(props) => (props.bg === null ? 'lightgrey' : props.bg)};
+`;
+const SizeBtnBottom = styled.div`
+  padding: 6px 4px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+// const LongRow = styled.div`
+//   height: 4px;
+//   width: 122px;
+//   margin-right: 4px;
+//   background: ${(props) => (props.bg === null ? 'lightgrey' : '#6B778C')};
+//   border-radius: 4px;
+// `;
+// const ShortRow = styled.div`
+//   height: 4px;
+//   width: 98px;
+//   background: ${(props) => (props.bg === null ? 'lightgrey' : '#6B778C')};
+//   border-radius: 4px;
+//   margin-bottom: 6px;
+// `;
+
 const CardModalMenu = ({ onClose, task }) => {
   const dispatch = useDispatch();
   const labels = useSelector((store) => store.labels);
@@ -70,7 +108,6 @@ const CardModalMenu = ({ onClose, task }) => {
   );
   const searchInput = useSelector((store) => store.menu.searchInput);
   const regex = new RegExp(`(${searchInput})`, 'i');
-  console.log('searchInput', searchInput);
   const searchInputRef = useRef(null);
 
   // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
@@ -95,6 +132,7 @@ const CardModalMenu = ({ onClose, task }) => {
       setColorSelected(editLabel.color);
     }
   }, [editLabel, colorSelected]);
+  console.log('colorSelected', colorSelected);
 
   return (
     <div className='card-modal-menu-div'>
@@ -175,6 +213,9 @@ const CardModalMenu = ({ onClose, task }) => {
                 if (type === 'edit-label') {
                   dispatch(toggleEditLabel(editLabel.id, false));
                 }
+                // if (type === 'cover') {
+                //   dispatch(toggleCardModalMenu(false, task));
+                // }
                 dispatch(changeCardModalMenuType(task, 'label'));
               }}
               className='card-modal-menu-icon'
@@ -184,20 +225,54 @@ const CardModalMenu = ({ onClose, task }) => {
                 ? 'Change label'
                 : type === 'create-label'
                 ? 'Create label'
+                : type === 'cover'
+                ? 'Cover'
                 : null}
             </span>
             <IoClose className='card-modal-menu-icon' onClick={onClose} />
           </div>
           <div className='card-modal-menu-main no-border-bottom'>
-            <label htmlFor='text-input'>
-              <h6>Name</h6>
-            </label>
-            <input
-              type='text'
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              id='text-input'
-            />
+            {(type === 'create-label' || type === 'edit-label') && (
+              <React.Fragment>
+                <label htmlFor='text-input'>
+                  <h6>Name</h6>
+                </label>
+                <input
+                  type='text'
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  id='text-input'
+                />
+              </React.Fragment>
+            )}
+            {/* {type === 'cover' && (
+              <React.Fragment>
+                <h6>SIZE</h6>
+                <div className='size-btn-div'>
+                  <div className='size-btn size-btn-sm'>
+                    <SizeBtnTop bg={colorSelected} size='small' />
+                    <div className='bottom'>
+                      <div className='row-long'></div>
+                      <div className='row-short'></div>
+                      <div className='row-3'>
+                        <div className='left'>
+                          <div></div>
+                          <div></div>
+                        </div>
+                        <div className='right'></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='size-btn size-btn-full'>
+                    <SizeBtnTop bg={colorSelected} size='full' />
+                    <div className='row-div'>
+                      <div className='row-long'></div>
+                      <div className='row-short'></div>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            )} */}
             <h6>Select a color</h6>
             <div className='color-select-div'>
               {colors.map((color, index) => (

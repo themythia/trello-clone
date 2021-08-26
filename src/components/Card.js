@@ -32,7 +32,7 @@ const LabelSpan = styled.span`
     props.hover ? darken(0.1, props.background) : props.background};
 `;
 
-const Card = ({ task, index }) => {
+const Card = ({ task, index, column }) => {
   const [hover, setHover] = useState(false);
   const [position, setPosition] = useState(null);
   const labelSize = useSelector((store) => store.menu.miniLabel);
@@ -150,6 +150,7 @@ const Card = ({ task, index }) => {
             dispatch(toggleEditLabel(editLabel?.id, false));
           }}
           task={task}
+          column={column}
         />
       )}
     </React.Fragment>

@@ -14,6 +14,8 @@ import {
   TOGGLE_CARD_MODAL_MENU,
   CHANGE_CARD_MODAL_MENU_TYPE,
   DELETE_LABEL,
+  DELETE_CARD,
+  COPY_CARD,
 } from '../actions/data';
 
 const data = (
@@ -323,6 +325,50 @@ const data = (
         demo: {
           ...state.demo,
           tasks: copyTasks,
+        },
+      };
+    case DELETE_CARD:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          columns: {
+            ...state.demo.columns,
+            [action.column.id]: {
+              ...state.demo.columns[action.column.id],
+              taskIds: action.column.taskIds.filter(
+                (taskId) => taskId !== action.task.id
+              ),
+            },
+          },
+        },
+      };
+    case COPY_CARD:
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          taskCount: state.demo.taskCount + 1,
+          tasks: {
+            ...state.demo.tasks,
+            [action.id]: {
+              ...action.task,
+              id: action.id,
+              time: Date.now(),
+              showCardModal: false,
+              showCardModalMenu: false,
+            },
+          },
+          columns: {
+            ...state.demo.columns,
+            [action.column.id]: {
+              ...state.demo.columns[action.column.id],
+              taskIds: [
+                ...state.demo.columns[action.column.id].taskIds,
+                action.id,
+              ],
+            },
+          },
         },
       };
     default:

@@ -7,12 +7,16 @@ import {
   BsTrashFill,
 } from 'react-icons/bs';
 import { FaCopy } from 'react-icons/fa';
-import { changeCardContent } from '../actions/data';
+import { changeCardContent, copyCard } from '../actions/data';
 import CardModalMenu from './CardModalMenu';
-import { toggleCardModal, toggleCardModalMenu } from '../actions/data';
+import {
+  toggleCardModal,
+  toggleCardModalMenu,
+  deleteCard,
+} from '../actions/data';
 import { toggleEditLabel } from '../actions/labels';
 
-const CardModal = ({ show, onClose, task }) => {
+const CardModal = ({ show, onClose, task, column }) => {
   const [input, setInput] = useState(task.content);
   // const showModalMenu = useSelector(
   //   (store) => store.menu.tasks[task.id].showCardModalMenu
@@ -20,6 +24,7 @@ const CardModal = ({ show, onClose, task }) => {
   const showModalMenu = useSelector(
     (store) => store.data.demo.tasks[task.id].showCardModalMenu
   );
+  console.log('showModalMenu', showModalMenu);
   const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
   console.log('type', type);
   const editLabel = useSelector((store) =>
@@ -79,14 +84,14 @@ const CardModal = ({ show, onClose, task }) => {
           </button>
         </div>
         <div className='right'>
-          <button
+          {/* <button
             onClick={() => {
               dispatch(toggleCardModalMenu(true, task, 'card'));
             }}
             className='side-btn'
           >
             <BsCardText size={16} className='side-btn-icon' /> Open card
-          </button>
+          </button> */}
           <button
             onClick={() => {
               dispatch(toggleCardModalMenu(true, task, 'label'));
@@ -95,17 +100,20 @@ const CardModal = ({ show, onClose, task }) => {
           >
             <BsFillTagFill size={16} className='side-btn-icon' /> Edit labels
           </button>
-          <button
+          {/* <button
             onClick={() => {
               dispatch(toggleCardModalMenu(true, task, 'cover'));
             }}
             className='side-btn'
           >
             <BsCardImage size={16} className='side-btn-icon' /> Change cover
-          </button>
+          </button> */}
           <button
             onClick={() => {
-              dispatch(toggleCardModalMenu(true, task, 'copy'));
+              const ID = () => '_' + Math.random().toString(36).substr(2, 9);
+              const id = ID();
+              dispatch(copyCard(task, column, id));
+              dispatch(toggleCardModal(false, task));
             }}
             className='side-btn'
           >
@@ -113,7 +121,7 @@ const CardModal = ({ show, onClose, task }) => {
           </button>
           <button
             onClick={() => {
-              dispatch(toggleCardModalMenu(true, task, 'delete'));
+              dispatch(deleteCard(task, column));
             }}
             className='side-btn'
           >
