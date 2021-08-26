@@ -48,17 +48,47 @@ const CardModal = ({ show, onClose, task, column }) => {
     };
   }, []);
 
+  console.log('windowSize', windowSize);
+  const modalPosition = () => {
+    let top = position?.top;
+    let left = position?.left;
+
+    if (position?.top + 82 > windowSize.height) {
+      console.log('working.....');
+      top = windowSize.height - 250;
+    }
+    if (position?.left > windowSize.width) {
+      left = windowSize.width;
+    }
+    if (position?.top < 0) {
+      top = 141;
+    }
+    if (position?.left < 0) {
+      left = 26;
+    }
+    if (position?.left + 354 > windowSize.width) {
+      left = windowSize.width - 354;
+    }
+    if (windowSize.height - position?.top < 120) {
+      top = windowSize.height - 250;
+    }
+    return { top, left };
+  };
+
   if (show === false) {
     return null;
   }
-
+  console.log('position', position);
   return (
     <div className='card-modal-div' onClick={onClose}>
       <div
         style={{
-          top: position?.top - windowSize.height / 2 + 80,
+          top: modalPosition().top - windowSize.height / 2 + 60,
           left:
-            position?.left - windowSize.width / 2 + position?.width / 2 + 60,
+            modalPosition().left -
+            windowSize.width / 2 +
+            position?.width / 2 +
+            48,
         }}
         className='card-modal-content'
         onClick={(e) => e.stopPropagation()}
