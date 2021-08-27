@@ -202,7 +202,6 @@ const List = ({ column, tasks, index }) => {
                 <div
                   className='card-list'
                   ref={provided.innerRef}
-                  isDraggingOver={snapshot.isDraggingOver}
                   {...provided.droppableProps}
                 >
                   <InnerList tasks={tasks} />

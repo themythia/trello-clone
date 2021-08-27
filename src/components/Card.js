@@ -76,7 +76,6 @@ const Card = ({ task, index, column }) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
-            isDragging={snapshot.isDragging}
           >
             <div ref={element}>
               {labels.length > 0 && (
