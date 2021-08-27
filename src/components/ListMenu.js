@@ -32,9 +32,7 @@ const ListMenu = (props, ref) => {
         <IoClose
           className='list-menu-icon'
           // onClick={() => setMenuShow(false)}
-          onClick={() =>
-            dispatch(toggleListMenu(false, column, 'close button in menu'))
-          }
+          onClick={() => dispatch(toggleListMenu(false, column))}
         />
       </div>
       <div className='list-menu-main'>
@@ -66,7 +64,10 @@ const ListMenu = (props, ref) => {
               Sort by...
             </span>
             <span
-              onClick={() => dispatch(deleteAllCards(column))}
+              onClick={() => {
+                dispatch(deleteAllCards(column));
+                dispatch(toggleListMenu(false, column));
+              }}
               className='list-menu-item'
             >
               Delete all cards in this list

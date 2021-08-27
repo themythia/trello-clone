@@ -66,7 +66,6 @@ const List = ({ column, tasks, index }) => {
     // if clicked outside of list menu
     // hides the menu
     const listener = (e) => {
-      console.log('e.target', e.target);
       if (
         listMenu &&
         listMenu.current &&
@@ -75,9 +74,7 @@ const List = ({ column, tasks, index }) => {
         if (e.target.className !== 'list-menu-item') {
           e.preventDefault();
           dispatch(toggleListMenu(false, column));
-          // setMenuState('menu');
         }
-        dispatch(toggleListMenu(false, column));
       }
     };
     // only adds the eventListener if menu is showing
