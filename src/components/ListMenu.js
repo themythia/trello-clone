@@ -6,37 +6,85 @@ const ListMenu = () => {
   const [menuState, setMenuState] = useState('menu');
   console.log('menuState', menuState);
   return (
-    <div className='list-menu-div'>
-      {menuState === 'menu' ? (
-        <React.Fragment>
-          <div className='list-menu-header'>
-            <span>List actions</span>
-            <IoClose className='list-menu-icon' />
-          </div>
-          <div className='list-menu-main'>
-            <span>Add card...</span>
-            <span>Copy list...</span>
-            <span onClick={() => setMenuState('move')}>Move list...</span>
-            <span>Sort by...</span>
-          </div>
-        </React.Fragment>
-      ) : menuState === 'move' ? (
-        <React.Fragment>
-          <div className='list-menu-header'>
-            <AiOutlineLeft className='list-menu-icon' />
-            <span>Move list</span>
-            <IoClose className='list-menu-icon' />
-          </div>
-          <div className='list-menu-main'>
-            <select name='' id=''>
-              <option value=''>1</option>
-              <option value=''>2</option>
-              <option value=''>3</option>
-              <option value=''>4</option>
-            </select>
-          </div>
-        </React.Fragment>
-      ) : null}
+    <div className='list-menu-div' ref={listMenu}>
+      <div className='list-menu-header'>
+        <AiOutlineLeft
+          onClick={() => setMenuState('menu')}
+          className='list-menu-icon'
+          style={{
+            visibility: menuState !== 'sort' && 'hidden',
+          }}
+        />
+        <span>{menuState === 'sort' ? `Sort List` : `List actions`}</span>
+        <IoClose
+          className='list-menu-icon'
+          onClick={() => setMenuShow(false)}
+        />
+      </div>
+      <div className='list-menu-main'>
+        {menuState === 'menu' ? (
+          <React.Fragment>
+            <span
+              className='list-menu-item'
+              onClick={() => {
+                dispatch(toggleAddCard(true, column.id));
+                setMenuShow(false);
+              }}
+            >
+              Add card...
+            </span>
+            <span
+              className='list-menu-item'
+              onClick={() => {
+                dispatch(copyList(column, index));
+                setMenuShow(false);
+              }}
+            >
+              Copy list...
+            </span>
+            <span
+              onClick={() => setMenuState('sort')}
+              className='list-menu-item'
+            >
+              Sort by...
+            </span>
+            <span
+              onClick={() => dispatch(deleteAllCards(column))}
+              className='list-menu-item'
+            >
+              Delete all cards in this list
+            </span>
+            <span
+              onClick={() => dispatch(deleteList(column))}
+              className='list-menu-item'
+            >
+              Delete this list
+            </span>
+          </React.Fragment>
+        ) : null}
+        {menuState === 'sort' ? (
+          <React.Fragment>
+            <span
+              onClick={() => dispatch(sortList(column, 'newest'))}
+              className='list-menu-item'
+            >
+              Date created (newest first)
+            </span>
+            <span
+              onClick={() => dispatch(sortList(column, 'oldest'))}
+              className='list-menu-item'
+            >
+              Date created (oldest first)
+            </span>
+            <span
+              onClick={() => dispatch(sortList(column, 'abc'))}
+              className='list-menu-item'
+            >
+              Card name (alphabetically)
+            </span>
+          </React.Fragment>
+        ) : null}
+      </div>
     </div>
   );
 };

@@ -1,43 +1,27 @@
 import React, { useEffect } from 'react';
+import List from './List';
+import NewList from './NewList';
 import initialData from '../utils/initial-data';
 import '@atlaskit/css-reset';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import styled from 'styled-components';
-import List from './List';
 import { useDispatch, useSelector } from 'react-redux';
 import { getInitialData, updateData } from '../actions/data';
-import NewList from './NewList';
 
 const App = () => {
   const dispatch = useDispatch();
   const store = useSelector((store) => store);
-  console.log('store', store);
   const data = useSelector((store) => store.data.demo);
-  console.log('data', data);
 
   useEffect(() => {
     dispatch(getInitialData(initialData));
   }, [dispatch]);
 
-  //onDragStart
-  // start = {
-  //   draggableId: 'task-1',
-  //   type: 'TYPE',
-  //   source: {
-  //     droppableId: 'column-1',
-  //     index: 0
-  //   }
-  // }
-  //onDragUpdate
-  // update = {
-  //   ...start,
-  //   destination: {
-  //     droppableId: 'column-1',
-  //     index: 1
-  //   }
-  // }
+  console.log('store', store);
+  console.log('data', data);
 
+  // reorder column on drag end
   const onDragEnd = (result) => {
+    const { destination, source, draggableId, type } = result;
     // example of result object
     // result = {
     //   draggableId: 'task-1',
@@ -54,17 +38,14 @@ const App = () => {
     //   }
     // }
 
-    //reorder our column
-    const { destination, source, draggableId, type } = result;
-
-    // if there's no destination, there's no need to
-    // reorder the column
+    // if there's no destination,
+    // there's no need to reorder the column
     if (!destination) {
       return;
     }
 
     // if destination is same with the source
-    // item stayed in the same position
+    // dragged item stayed in the same position
     // hence no need to reorder the column
     if (
       destination.droppableId === source.droppableId &&
@@ -73,8 +54,10 @@ const App = () => {
       return;
     }
 
+    // if dragged item is column, creates a newState
+    // and dispatches it to update the store
     if (type === 'column') {
-      const newColumnOrder = Array.from(data.columnOrder);
+      const newColumnOrder = [...data.columnOrder];
       newColumnOrder.splice(source.index, 1);
       newColumnOrder.splice(destination.index, 0, draggableId);
 
@@ -82,45 +65,49 @@ const App = () => {
         ...data,
         columnOrder: newColumnOrder,
       };
+
       dispatch(updateData(newState));
       return;
     }
 
+    // Column objects that drag started and finished
     const start = data.columns[source.droppableId];
     const finish = data.columns[destination.droppableId];
 
-    // if start and finish columns are the same
+    // if start and finish columns are the same,
+    // creates a newState and dispatches to update the store
     if (start === finish) {
-      const newTaskIds = Array.from(start.taskIds);
-      newTaskIds.splice(source.index, 1); // removes ONE item FROM index
-      newTaskIds.splice(destination.index, 0, draggableId); // adds item to destination index
-      const newColumn = {
-        ...start,
-        taskIds: newTaskIds,
-      };
+      const newTaskIds = [...start.taskIds];
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
+
       const newState = {
         ...data,
         columns: {
           ...data.columns,
-          [newColumn.id]: newColumn,
+          [start.id]: {
+            ...start,
+            taskIds: newTaskIds,
+          },
         },
       };
-      console.log('result', result);
-      console.log('newState', newState);
+
       dispatch(updateData(newState));
       return;
     }
 
-    // moving from one list to another
-    const startTaskIds = Array.from(start.taskIds);
-    startTaskIds.splice(source.index, 1);
+    // if dragged item moving from one column to another
+    // creates a newState to dispatch and update the store
+    const startTaskIds = [...start.taskIds];
+    const finishTaskIds = [...finish.taskIds];
+    startTaskIds.splice(source.index, 1); // removes dragged item from starting column
+    finishTaskIds.splice(destination.index, 0, draggableId); // inserts dragged item into finishing column
+
     const newStart = {
       ...start,
       taskIds: startTaskIds,
     };
 
-    const finishTaskIds = Array.from(finish.taskIds);
-    finishTaskIds.splice(destination.index, 0, draggableId);
     const newFinish = {
       ...finish,
       taskIds: finishTaskIds,
@@ -138,16 +125,21 @@ const App = () => {
     dispatch(updateData(newState));
   };
 
+  //loading
+  if (data.columnOrder === undefined) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='all-columns' direction='horizontal' type='column'>
         {(provided) => (
           <div
-            className='container'
             {...provided.droppableProps}
+            className='container'
             ref={provided.innerRef}
           >
-            {data?.columnOrder?.map((columnId, index) => {
+            {data.columnOrder.map((columnId, index) => {
               const column = data.columns[columnId];
               const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
               return (

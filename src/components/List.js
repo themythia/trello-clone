@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Card from './Card';
+import NewCard from './NewCard';
 import { useDispatch, useSelector } from 'react-redux';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   changeListTitle,
   copyList,
@@ -7,40 +10,53 @@ import {
   deleteList,
   sortList,
 } from '../actions/data';
-import Card from './Card';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
-import NewCard from './NewCard';
+import { toggleAddCard } from '../actions/menu';
 import { BsThreeDots } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
-import { toggleAddCard } from '../actions/menu';
 import { AiOutlineLeft } from 'react-icons/ai';
-
-//if min-height not declared in tasklist, drop area height will be 0px
 
 const List = ({ column, tasks, index }) => {
   const [show, setShow] = useState(false);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(column.title);
   const [menuShow, setMenuShow] = useState(false);
   const [menuState, setMenuState] = useState('menu');
 
   const dispatch = useDispatch();
-  const textInput = useRef('');
+  const textInput = useRef(null);
   const listMenu = useRef(null);
+
   const InnerList = React.memo(function InnerList({ tasks }) {
     return tasks.map((task, index) => (
       <Card key={task.id} task={task} index={index} column={column} />
     ));
   });
+  console.log('column.title:', column.title);
+  console.log('input:', input);
+  // if textInput isn't empty,
+  // dispatches new list title to store,
+  // resets textInput value,
+  // hides textInput
+  const changeTitle = () => {
+    if (input.length > 0) {
+      dispatch(changeListTitle(input, column.id));
+    }
+    if (input.length === 0) {
+      setInput(column.title);
+    }
+    setShow(false);
+  };
 
+  // listens for enter key to invoke changeTitle() on key press
   useEffect(() => {
-    const listener = (event) => {
-      if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        event.preventDefault();
-        if (input.length > 0) {
-          dispatch(changeListTitle(input, column.id));
-          setInput('');
-          setShow(false);
-        }
+    const listener = (e) => {
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+        e.preventDefault();
+        changeTitle();
+        // if (input.length > 0) {
+        //   dispatch(changeListTitle(input, column.id));
+        //   setInput('');
+        //   setShow(false);
+        // }
       }
     };
     document.addEventListener('keydown', listener);
@@ -66,6 +82,7 @@ const List = ({ column, tasks, index }) => {
     }
     return () => document.removeEventListener('click', listener);
   }, [menuShow]);
+
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided) => (
@@ -186,13 +203,7 @@ const List = ({ column, tasks, index }) => {
                 onChange={(e) => setInput(e.target.value)}
                 ref={textInput}
                 autoFocus
-                onBlur={() => {
-                  if (input.length > 0) {
-                    dispatch(changeListTitle(input, column.id));
-                  }
-                  setInput('');
-                  setShow(false);
-                }}
+                onBlur={changeTitle}
                 {...provided.dragHandleProps}
               ></input>
             )}
