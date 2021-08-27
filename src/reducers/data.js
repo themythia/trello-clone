@@ -16,6 +16,7 @@ import {
   DELETE_LABEL,
   DELETE_CARD,
   COPY_CARD,
+  TOGGLE_LIST_MENU,
 } from '../actions/data';
 
 const data = (
@@ -53,6 +54,7 @@ const data = (
               id: `column-${columnCount + 1}`,
               title: action.content,
               taskIds: [],
+              showMenu: false,
             },
           },
           columnOrder: [...state.demo.columnOrder, `column-${columnCount + 1}`],
@@ -122,6 +124,7 @@ const data = (
               [`column-${copyListColumnCount + 1}`]: {
                 ...action.column,
                 id: `column-${copyListColumnCount + 1}`,
+                showMenu: false,
               },
             },
             columnOrder: newColumnOrder,
@@ -154,6 +157,7 @@ const data = (
               ...action.column,
               id: `column-${state.demo.columnOrder.length + 1}`,
               taskIds: Object.keys(copiedListTasks),
+              showMenu: false,
             },
           },
           columnOrder: newColumnOrder,
@@ -367,6 +371,21 @@ const data = (
                 ...state.demo.columns[action.column.id].taskIds,
                 action.id,
               ],
+            },
+          },
+        },
+      };
+    case TOGGLE_LIST_MENU:
+      console.log('logger:', action.log);
+      return {
+        ...state,
+        demo: {
+          ...state.demo,
+          columns: {
+            ...state.demo.columns,
+            [action.column.id]: {
+              ...state.demo.columns[action.column.id],
+              showMenu: action.bool,
             },
           },
         },

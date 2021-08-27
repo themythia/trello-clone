@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleAddCard, addListMenuColumn } from '../actions/menu';
+import {
+  copyList,
+  deleteAllCards,
+  deleteList,
+  sortList,
+  toggleListMenu,
+} from '../actions/data';
 import { IoClose } from 'react-icons/io5';
 import { AiOutlineLeft } from 'react-icons/ai';
 
-const ListMenu = () => {
+const ListMenu = (props, ref) => {
+  const { column, index } = props;
+  const dispatch = useDispatch();
+  const showMenu = useSelector(
+    (store) => store.data.demo.columns[column.id].showMenu
+  );
   const [menuState, setMenuState] = useState('menu');
-  console.log('menuState', menuState);
   return (
-    <div className='list-menu-div' ref={listMenu}>
+    <div className='list-menu-div' ref={ref}>
       <div className='list-menu-header'>
         <AiOutlineLeft
           onClick={() => setMenuState('menu')}
@@ -18,7 +31,10 @@ const ListMenu = () => {
         <span>{menuState === 'sort' ? `Sort List` : `List actions`}</span>
         <IoClose
           className='list-menu-icon'
-          onClick={() => setMenuShow(false)}
+          // onClick={() => setMenuShow(false)}
+          onClick={() =>
+            dispatch(toggleListMenu(false, column, 'close button in menu'))
+          }
         />
       </div>
       <div className='list-menu-main'>
@@ -28,7 +44,7 @@ const ListMenu = () => {
               className='list-menu-item'
               onClick={() => {
                 dispatch(toggleAddCard(true, column.id));
-                setMenuShow(false);
+                dispatch(toggleListMenu(false, column));
               }}
             >
               Add card...
@@ -37,7 +53,8 @@ const ListMenu = () => {
               className='list-menu-item'
               onClick={() => {
                 dispatch(copyList(column, index));
-                setMenuShow(false);
+                dispatch(toggleListMenu(false, column));
+                dispatch(addListMenuColumn(column));
               }}
             >
               Copy list...
@@ -88,4 +105,6 @@ const ListMenu = () => {
     </div>
   );
 };
-export default ListMenu;
+
+const forwardedListMenu = React.forwardRef(ListMenu);
+export default forwardedListMenu;

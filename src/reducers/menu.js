@@ -5,6 +5,8 @@ import {
   GET_POSITION,
   TOGGLE_LABEL_SIZE,
   GET_SEARCH_INPUT,
+  TOGGLE_LIST_MENU,
+  ADD_LIST_MENU_COLUMN,
 } from '../actions/menu';
 const defaultState = {
   tasks: {
@@ -36,6 +38,12 @@ const defaultState = {
       showCardModal: false,
       showCardModalMenu: false,
     },
+  },
+  columns: {
+    'column-1': {
+      showMenu: false,
+    },
+    'column-2': { showMenu: false },
   },
   miniLabel: false,
   searchInput: '',
@@ -92,6 +100,26 @@ const menu = (state = defaultState, action) => {
       return {
         ...state,
         searchInput: action.input,
+      };
+    case TOGGLE_LIST_MENU:
+      return {
+        ...state,
+        columns: {
+          ...state.columns,
+          [action.column.id]: { showMenu: action.bool },
+        },
+      };
+    case ADD_LIST_MENU_COLUMN:
+      console.log({
+        ...state.columns,
+        [action.column.id]: { showMenu: false },
+      });
+      return {
+        ...state,
+        columns: {
+          ...state.columns,
+          [action.column.id]: { showMenu: false },
+        },
       };
     default:
       return state;

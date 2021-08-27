@@ -15,6 +15,7 @@ export const CHANGE_CARD_MODAL_MENU_TYPE = 'CHANGE_CARD_MODAL_MENU_TYPE';
 export const DELETE_LABEL = 'DELETE_LABEL';
 export const DELETE_CARD = 'DELETE_CARD';
 export const COPY_CARD = 'COPY_CARD';
+export const TOGGLE_LIST_MENU = 'TOGGLE_LIST_MENU';
 
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
@@ -91,4 +92,11 @@ export const copyCard = (task, column, id) => ({
   task,
   column,
   id,
+});
+
+export const toggleListMenu = (bool, column, log) => ({
+  type: TOGGLE_LIST_MENU,
+  bool,
+  column,
+  log,
 });
