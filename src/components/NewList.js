@@ -1,31 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { handleNewList } from '../actions/data';
 import { useDispatch } from 'react-redux';
+import { handleNewList } from '../actions/data';
 import { BiPlus } from 'react-icons/bi';
 import { IoClose } from 'react-icons/io5';
+import ID from '../utils/generateId';
 
 const NewList = () => {
   const [show, setShow] = useState(false);
   const [input, setInput] = useState('');
-  const inputField = useRef();
+  const textInput = useRef();
   const dispatch = useDispatch();
 
+  // if textInput isn't empty,
+  // dispatches new list to store,
+  // resets textInput value,
+  // focuses textInput for next input
   const addNewList = () => {
+    const id = ID();
     if (input.length > 0) {
-      dispatch(handleNewList(input));
+      dispatch(handleNewList(input, id));
       setInput('');
-      inputField.current.focus();
+      textInput.current.focus();
     }
   };
+
   const reset = () => {
     setInput('');
     setShow(false);
   };
 
+  // listens for enter key to invoke addNewList() on key press
   useEffect(() => {
-    const listener = (event) => {
-      if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        event.preventDefault();
+    const listener = (e) => {
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+        e.preventDefault();
         addNewList();
       }
     };
@@ -44,15 +52,15 @@ const NewList = () => {
           <input
             type='text'
             value={input}
+            ref={textInput}
+            placeholder='Enter list title...'
+            autoFocus
             onChange={(e) => setInput(e.target.value)}
-            ref={inputField}
             onBlur={() => {
               if (input.length === 0) {
                 setShow(false);
               }
             }}
-            placeholder='Enter list title...'
-            autoFocus
           />
           <div className='btn-div'>
             <button onClick={addNewList}>Add List</button>

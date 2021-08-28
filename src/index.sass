@@ -54,9 +54,11 @@ h3
 
 .container
   display: flex
+  align-items: flex-start
   margin: 0 4px
   overflow-x: auto
   overflow-y: hidden
+  height: calc( 100vh - 84px)
   max-height: calc( 100vh - 84px)
   &::-webkit-scrollbar
     width: 8px
@@ -77,7 +79,7 @@ h3
   border-radius: 3px
   width: 272px
   min-width: 272px
-  height: 100%
+  height: auto
   display: flex
   flex-direction: column
   background-color: #ebecf0
@@ -131,22 +133,6 @@ h3
   .card-label-div
     display: flex
     flex-wrap: wrap
-    // span
-    //   display: inline-block
-    //   font-size: 12px
-    //   border-radius: 4px
-    //   color: white
-    //   font-weight: 700
-    //   margin: 0 4px 4px 0
-    //   padding: 0 8px
-    //   max-width: 210px
-    //   text-overflow: ellipsis
-    //   overflow: hidden
-    //   white-space: nowrap
-
-      
-
-
 
   .card-container-icon
     position: absolute
@@ -165,9 +151,14 @@ h3
   &:hover
     background-color: #ebecf0
 
+// .card-list-container
+//   overflow: hidden
+//   min-height: 1px
+//   height: auto
 .card-list
   transition: background-color 0.2s ease
   overflow-y: auto
+  // max-height: 803px
   min-height: 1px
 
 .add-new-list-btn
@@ -273,7 +264,10 @@ h3
       outline: none      
     .transparent
       background-color: transparent
-      color: black
+      color: #6b778c
+      transition: all 0.2s
+      &:hover
+        color: black
 
 .list-menu-div
   background: white

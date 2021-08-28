@@ -4,6 +4,7 @@ import { BiPlus } from 'react-icons/bi';
 import { addNewCard } from '../actions/data';
 import { toggleAddCard } from '../actions/menu';
 import { IoClose } from 'react-icons/io5';
+import ID from '../utils/generateId';
 
 const NewCard = ({ column, cardShow }) => {
   const [input, setInput] = useState('');
@@ -16,8 +17,9 @@ const NewCard = ({ column, cardShow }) => {
   }, [column]);
 
   const newCard = () => {
+    const id = ID();
     if (input.length > 0) {
-      dispatch(addNewCard(input, column));
+      dispatch(addNewCard(input, column, id));
       setInput('');
       // setShow(false);
       dispatch(toggleAddCard(false, column));

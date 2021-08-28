@@ -1,17 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { Draggable, useMouseSensor } from 'react-beautiful-dnd';
-import { BsPencil } from 'react-icons/bs';
 import CardModal from './CardModal';
+import { Draggable } from 'react-beautiful-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import { getPosition, getSearchInput, miniLabel } from '../actions/menu';
-import {
-  changeCardModalMenuType,
-  toggleCardModal,
-  toggleCardModalMenu,
-} from '../actions/data';
+import { getPosition, miniLabel } from '../actions/menu';
+import { toggleCardModal, toggleCardModalMenu } from '../actions/data';
 import { toggleEditLabel } from '../actions/labels';
+import styled from 'styled-components';
 import { darken } from 'polished';
+import { BsPencil } from 'react-icons/bs';
 
 const LabelSpan = styled.span`
   display: inline-block;
@@ -33,17 +29,17 @@ const LabelSpan = styled.span`
 `;
 
 const Card = ({ task, index, column }) => {
+  const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
   const [position, setPosition] = useState(null);
+  const [labelHover, setLabelHover] = useState(false);
+
+  const element = useRef(null);
+
   const labelSize = useSelector((store) => store.menu.miniLabel);
-  const element = useRef('');
-  const dispatch = useDispatch();
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
-  const [labelHover, setLabelHover] = useState(false);
-  const cardLabelDiv = useRef(null);
-
   const showCardModal = useSelector(
     (store) => store.data.demo.tasks[task.id].showCardModal
   );
@@ -52,44 +48,40 @@ const Card = ({ task, index, column }) => {
   );
   const labels = useSelector((store) => store.labels);
 
+  // gets position of card relative to viewport
   useEffect(() => {
     const rect = element.current.getBoundingClientRect();
+    const { x, y, top, bottom, left, right, width } = rect;
     setPosition({
-      x: rect.x,
-      y: rect.y,
-      top: rect.top,
-      bottom: rect.bottom,
-      left: rect.left,
-      right: rect.right,
-      width: rect.width,
+      x,
+      y,
+      top,
+      bottom,
+      left,
+      right,
+      width,
     });
   }, []);
 
   return (
     <React.Fragment>
       <Draggable draggableId={task.id} index={index}>
-        {(provided, snapshot) => (
+        {(provided) => (
           <div
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            className='card-container'
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
-            isDragging={snapshot.isDragging}
+            className='card-container'
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
           >
             <div ref={element}>
               {labels.length > 0 && (
                 <div
-                  className={`card-label-div`}
-                  onClick={() => {
-                    dispatch(miniLabel());
-                    cardLabelDiv.current.classList.toggle('active');
-                    console.log('carddfg', cardLabelDiv.current.classList);
-                  }}
+                  className='card-label-div'
+                  onClick={() => dispatch(miniLabel())}
                   onMouseOver={() => setLabelHover(true)}
                   onMouseLeave={() => setLabelHover(false)}
-                  ref={cardLabelDiv}
                 >
                   {taskLabels.map((taskLabel, index) => {
                     const updatedLabel = labels.find(
@@ -105,24 +97,6 @@ const Card = ({ task, index, column }) => {
                         {!labelSize && updatedLabel.name}
                       </LabelSpan>
                     );
-                    // if (!labelSize) {
-                    //   return (
-                    //     <LabelSpan
-                    //       key={index}
-                    //       background={updatedLabel.color}
-                    //       hover={labelHover}
-                    //     >
-                    //       {updatedLabel.name}
-                    //     </LabelSpan>
-                    //   );
-                    // } else {
-                    //   return (
-                    //     <LabelSpanMini
-                    //       background={updatedLabel.color}
-                    //       hover={labelHover}
-                    //     />
-                    //   );
-                    // }
                   })}
                 </div>
               )}
@@ -144,7 +118,6 @@ const Card = ({ task, index, column }) => {
         <CardModal
           show={showCardModal}
           onClose={() => {
-            // dispatch(getSearchInput(''));
             dispatch(toggleCardModal(false, task));
             dispatch(toggleCardModalMenu(false, task, 'label'));
             dispatch(toggleEditLabel(editLabel?.id, false));
