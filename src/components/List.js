@@ -116,9 +116,9 @@ const List = ({ column, tasks, index }) => {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                   className='card-list'
-                  onScroll={(e) =>
-                    dispatch(getScrollHeight(column.id, e.target.scrollTop))
-                  }
+                  onScroll={(e) => {
+                    dispatch(getScrollHeight(column.id, e.target.scrollTop));
+                  }}
                 >
                   <Cards tasks={tasks} />
                   {provided.placeholder}

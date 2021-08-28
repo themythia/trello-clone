@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import {
   RECEIVE_INITIAL_DATA,
   UPDATE_DATA,
@@ -172,10 +173,16 @@ const data = (
     case SORT_LIST:
       console.log('action.column', action.column);
       let newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
-      // newTaskIds.sort((a, b) => {
-      //   return state.demo.tasks[b].time - state.demo.tasks[a].time;
-      // });
-      console.log('newTaskIds', newTaskIds);
+      const sorted = newTaskIds.map((taskId) => state.demo.tasks[taskId].time);
+
+      //sorting big numbers
+      console.log(
+        'sorted',
+        // eslint-disable-next-line no-undef
+        sorted.sort((a, b) =>
+          BigInt(b) > BigInt(a) ? 1 : BigInt(b) < BigInt(a) ? -1 : 0
+        )
+      );
       return {
         ...state,
         demo: {
@@ -215,11 +222,19 @@ const data = (
       };
 
     case DELETE_ALL_CARDS:
-      console.log('DELETE_ALL_CARDS');
+      // clones tasks object
+      const deleteAllCardsTasks = Object.assign({}, state.demo.tasks);
+      // deletes all cards from cloned tasks object
+      action.column.taskIds.forEach(
+        (taskId) => delete deleteAllCardsTasks[taskId]
+      );
+
       return {
         ...state,
         demo: {
           ...state.demo,
+          tasks: deleteAllCardsTasks,
+          taskCount: state.demo.taskCount - action.column.taskIds.length,
           columns: {
             ...state.demo.columns,
             [action.column.id]: {
@@ -229,18 +244,34 @@ const data = (
           },
         },
       };
+
     case DELETE_LIST:
+      // clones and creates a new data.demo.columns object
       const newColumns = Object.assign({}, state.demo.columns);
+      // clones and creates a new taskIds array of list that will be deleted
+      const newDeleteListTaskIds = [...newColumns[action.column.id].taskIds];
+      // clones and creates a new data.demo.tasks object
+      const newDeleteListTasks = Object.assign({}, state.demo.tasks);
+
+      // deletes tasks of deleted list from copied tasks object
+      newDeleteListTaskIds.forEach(
+        (taskId) => delete newDeleteListTasks[taskId]
+      );
+
+      //deletes list from copied columns object
       delete newColumns[action.column.id];
 
       return {
         ...state,
         demo: {
           ...state.demo,
+          tasks: newDeleteListTasks,
           columns: newColumns,
           columnOrder: state.demo.columnOrder.filter(
             (column) => column !== action.column.id
           ),
+          taskCount: Object.keys(newDeleteListTasks).length,
+          columnCount: state.demo.columnOrder.length - 1,
         },
       };
     case CHANGE_CARD_CONTENT:
@@ -336,10 +367,16 @@ const data = (
         },
       };
     case DELETE_CARD:
+      // clones task object
+      const deleteCardTasks = Object.assign({}, state.demo.tasks);
+      // deletes task from cloned object
+      delete deleteCardTasks[action.task.id];
+
       return {
         ...state,
         demo: {
           ...state.demo,
+          tasks: deleteCardTasks,
           columns: {
             ...state.demo.columns,
             [action.column.id]: {
@@ -349,6 +386,7 @@ const data = (
               ),
             },
           },
+          taskCount: state.demo.taskCount - 1,
         },
       };
     case COPY_CARD:

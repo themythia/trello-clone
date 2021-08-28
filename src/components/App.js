@@ -17,7 +17,6 @@ const App = () => {
   }, [dispatch]);
 
   console.log('store', store);
-  console.log('data', data);
 
   // reorder column on drag end
   const onDragEnd = (result) => {
