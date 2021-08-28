@@ -133,7 +133,6 @@ const CardModalMenu = ({ onClose, task }) => {
       setColorSelected(editLabel.color);
     }
   }, [editLabel, colorSelected]);
-  console.log('colorSelected', colorSelected);
 
   return (
     <div className='card-modal-menu-div'>

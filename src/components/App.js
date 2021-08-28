@@ -9,14 +9,11 @@ import { getInitialData, updateData } from '../actions/data';
 
 const App = () => {
   const dispatch = useDispatch();
-  const store = useSelector((store) => store);
   const data = useSelector((store) => store.data.demo);
 
   useEffect(() => {
     dispatch(getInitialData(initialData));
   }, [dispatch]);
-
-  console.log('store', store);
 
   // reorder column on drag end
   const onDragEnd = (result) => {

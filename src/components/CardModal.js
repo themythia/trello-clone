@@ -27,7 +27,6 @@ const CardModal = ({ show, onClose, task, column }) => {
   );
 
   const scrollTop = useSelector((store) => store.menu[column.id].scrollTop);
-  console.log('scrollTop', scrollTop);
 
   useEffect(() => {
     if (type === undefined) {
@@ -53,30 +52,15 @@ const CardModal = ({ show, onClose, task, column }) => {
       top = windowSize.height - 130;
     }
 
-    // if (position?.top + 82 > windowSize.height) {
-    //   top = windowSize.height - 250;
-    // }
     if (position?.left > windowSize.width) {
       left = windowSize.width;
     }
-    // if (position?.top < 0) {
-    //   top = 141;
-    // }
-    // if (position?.left < 0) {
-    //   left = 26;
-    // }
     if (position?.left + 354 > windowSize.width) {
       left = windowSize.width - 354;
     }
-    // if (windowSize.height - position?.top < 120) {
-    //   console.log('warning');
-    //   top = windowSize.height - 250;
-    // }
     return { top, left };
   };
 
-  console.log(position);
-  console.log('modalPosition', modalPosition());
   if (show === false) {
     return null;
   }
