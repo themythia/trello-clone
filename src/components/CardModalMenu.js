@@ -17,6 +17,7 @@ import {
   createLabel,
 } from '../actions/labels';
 import { getSearchInput, toggleCardModalMenu } from '../actions/menu';
+import ID from '../utils/generateId';
 
 const LabelCard = styled.div`
   display: flex;
@@ -297,8 +298,6 @@ const CardModalMenu = ({ onClose, task }) => {
                       );
                     }
                     if (type === 'create-label') {
-                      const ID = () =>
-                        '_' + Math.random().toString(36).substr(2, 9);
                       const id = ID();
                       dispatch(
                         createLabel({

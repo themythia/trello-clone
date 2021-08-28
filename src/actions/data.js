@@ -17,23 +17,38 @@ export const DELETE_CARD = 'DELETE_CARD';
 export const COPY_CARD = 'COPY_CARD';
 export const TOGGLE_LIST_MENU = 'TOGGLE_LIST_MENU';
 
+// gets initial data on page load
 export const getInitialData = (data) => ({ type: RECEIVE_INITIAL_DATA, data });
 
+// updates data on drag events
 export const updateData = (data) => ({ type: UPDATE_DATA, data });
-export const handleNewList = (content) => ({ type: ADD_NEW_LIST, content });
+
+// adds a new list
+export const handleNewList = (content, id) => ({
+  type: ADD_NEW_LIST,
+  content,
+  id,
+});
+
 export const changeListTitle = (title, listId) => ({
   type: CHANGE_LIST_TITLE,
   title,
   listId,
 });
 
-export const addNewCard = (content, listId) => ({
+export const addNewCard = (content, listId, id) => ({
   type: ADD_NEW_CARD,
   content,
   listId,
+  id,
 });
 
-export const copyList = (column, index) => ({ type: COPY_LIST, column, index });
+export const copyList = (column, index, id) => ({
+  type: COPY_LIST,
+  column,
+  index,
+  id,
+});
 
 export const sortList = (column, sortType) => ({
   type: SORT_LIST,

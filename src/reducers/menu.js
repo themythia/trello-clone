@@ -7,6 +7,7 @@ import {
   GET_SEARCH_INPUT,
   TOGGLE_LIST_MENU,
   ADD_LIST_MENU_COLUMN,
+  GET_SCROLL_HEIGHT,
 } from '../actions/menu';
 const defaultState = {
   tasks: {
@@ -26,24 +27,13 @@ const defaultState = {
       showCardModal: false,
       showCardModalMenu: false,
     },
-    'task-5': {
-      showCardModal: false,
-      showCardModalMenu: false,
-    },
-    'task-6': {
-      showCardModal: false,
-      showCardModalMenu: false,
-    },
-    'task-7': {
-      showCardModal: false,
-      showCardModalMenu: false,
-    },
   },
   columns: {
     'column-1': {
       showMenu: false,
+      scrollTop: 0,
     },
-    'column-2': { showMenu: false },
+    'column-2': { showMenu: false, scrollTop: 0 },
   },
   miniLabel: false,
   searchInput: '',
@@ -112,13 +102,21 @@ const menu = (state = defaultState, action) => {
     case ADD_LIST_MENU_COLUMN:
       console.log({
         ...state.columns,
-        [action.column.id]: { showMenu: false },
+        [action.column.id]: { showMenu: false, scrollTop: 0 },
       });
       return {
         ...state,
         columns: {
           ...state.columns,
-          [action.column.id]: { showMenu: false },
+          [action.column.id]: { showMenu: false, scrollTop: 0 },
+        },
+      };
+    case GET_SCROLL_HEIGHT:
+      return {
+        ...state,
+        [action.columnId]: {
+          ...state[action.columnId],
+          scrollTop: action.scrollTop,
         },
       };
     default:

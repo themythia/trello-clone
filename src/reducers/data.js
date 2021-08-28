@@ -18,6 +18,7 @@ import {
   COPY_CARD,
   TOGGLE_LIST_MENU,
 } from '../actions/data';
+import ID from '../utils/generateId';
 
 const data = (
   state = {
@@ -43,22 +44,21 @@ const data = (
         },
       };
     case ADD_NEW_LIST:
-      let columnCount = state.demo.columnCount;
       return {
         ...state,
         demo: {
           ...state.demo,
           columns: {
             ...state.demo.columns,
-            [`column-${columnCount + 1}`]: {
-              id: `column-${columnCount + 1}`,
+            [action.id]: {
+              id: action.id,
               title: action.content,
               taskIds: [],
               showMenu: false,
             },
           },
-          columnOrder: [...state.demo.columnOrder, `column-${columnCount + 1}`],
-          columnCount: columnCount + 1,
+          columnOrder: [...state.demo.columnOrder, action.id],
+          columnCount: state.demo.columnCount + 1,
         },
       };
     case CHANGE_LIST_TITLE:
@@ -83,8 +83,8 @@ const data = (
           ...state.demo,
           tasks: {
             ...state.demo.tasks,
-            [`task-${cardCount + 1}`]: {
-              id: `task-${cardCount + 1}`,
+            [action.id]: {
+              id: action.id,
               content: action.content,
               labels: [],
               time: Date.now(),
@@ -97,22 +97,24 @@ const data = (
             [action.listId]: {
               ...state.demo.columns[action.listId],
               taskIds: state.demo.columns[action.listId].taskIds.concat(
-                `task-${cardCount + 1}`
+                action.id
               ),
             },
           },
           taskCount: cardCount + 1,
         },
       };
+
     case COPY_LIST:
-      let copyListColumnCount = state.demo.columnCount;
-      console.log('copyListColumnCount', copyListColumnCount);
-      const newColumnOrder = state.demo.columnOrder.slice();
-      newColumnOrder.splice(
-        action.index,
-        0,
-        `column-${copyListColumnCount + 1}`
-      );
+      const copiedList = {
+        id: action.id,
+        title: action.column.title,
+        taskIds: [],
+        showMenu: false,
+      };
+
+      const copiedColumnOrder = state.demo.columnOrder.slice();
+      copiedColumnOrder.splice(action.index + 1, 0, action.id);
 
       if (action.column.taskIds.length === 0) {
         return {
@@ -121,58 +123,59 @@ const data = (
             ...state.demo,
             columns: {
               ...state.demo.columns,
-              [`column-${copyListColumnCount + 1}`]: {
-                ...action.column,
-                id: `column-${copyListColumnCount + 1}`,
-                showMenu: false,
-              },
+              [action.id]: copiedList,
             },
-            columnOrder: newColumnOrder,
-            columnCount: copyListColumnCount + 1,
+            columnOrder: copiedColumnOrder,
+            columnCount: state.demo.columnCount + 1,
           },
         };
       }
-      //creates new tasks with new taskIds in an array
-      const copiedListTasksArray = action.column.taskIds.map((task, index) => ({
-        [`task-${Object.keys(state.demo.tasks).length + index + 1}`]: {
-          ...state.demo.tasks[task],
-          id: `task-${Object.keys(state.demo.tasks).length + index + 1}`,
-        },
-      }));
-      //reduces copiedListTasksArray in a new object
-      const copiedListTasks = copiedListTasksArray.reduce((target, current) =>
-        Object.assign(target, current)
+
+      // creates new tasks copied from action.column
+      const copiedTasks = action.column.taskIds.map((task) => {
+        let id = ID();
+        return {
+          [id]: {
+            ...state.demo.tasks[task],
+            id,
+          },
+        };
+      });
+
+      const copiedStateTasks = Object.assign({}, state.demo.tasks);
+      // //reduces copiedTasks and copiedStateTasks in a new object
+      const newListTasks = copiedTasks.reduce(
+        (target, current) => Object.assign({}, target, current),
+        copiedStateTasks
       );
-      //copies state.tasks without mutating the state
-      const stateTasksCopy = Object.assign({}, state.demo.tasks);
 
       return {
         ...state,
         demo: {
           ...state.demo,
-          tasks: Object.assign(stateTasksCopy, copiedListTasks),
+          tasks: newListTasks,
           columns: {
             ...state.demo.columns,
-            [`column-${state.demo.columnOrder.length + 1}`]: {
+            [action.id]: {
               ...action.column,
-              id: `column-${state.demo.columnOrder.length + 1}`,
-              taskIds: Object.keys(copiedListTasks),
+              id: action.id,
+              taskIds: copiedTasks.map((task) => Object.keys(task)[0]),
               showMenu: false,
             },
           },
-          columnOrder: newColumnOrder,
-          columnCount: copyListColumnCount + 1,
-          taskCount: state.demo.taskCount + copiedListTasksArray.length,
+          columnOrder: copiedColumnOrder,
+          columnCount: state.demo.columnCount + 1,
+          taskCount: state.demo.taskCount + copiedTasks.length,
         },
       };
+
     case SORT_LIST:
       console.log('action.column', action.column);
-      const newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
+      let newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
       // newTaskIds.sort((a, b) => {
       //   return state.demo.tasks[b].time - state.demo.tasks[a].time;
       // });
       console.log('newTaskIds', newTaskIds);
-
       return {
         ...state,
         demo: {
@@ -210,6 +213,7 @@ const data = (
           },
         },
       };
+
     case DELETE_ALL_CARDS:
       console.log('DELETE_ALL_CARDS');
       return {

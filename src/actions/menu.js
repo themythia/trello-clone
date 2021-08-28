@@ -7,6 +7,7 @@ export const TOGGLE_LABEL_SIZE = 'TOGGLE_LABEL_SIZE';
 export const GET_SEARCH_INPUT = 'GET_SEARCH_INPUT';
 export const TOGGLE_LIST_MENU = 'TOGGLE_LIST_MENU';
 export const ADD_LIST_MENU_COLUMN = 'ADD_LIST_MENU_COLUMN';
+export const GET_SCROLL_HEIGHT = 'GET_SCROLL_HEIGHT';
 
 export const toggleAddCard = (bool, column) => ({
   type: TOGGLE_ADD_CARD,
@@ -36,7 +37,6 @@ export const getPosition = (task, position) => {
 };
 
 export const addModalState = () => ({ type: ADD_MODAL_STATE });
-
 export const miniLabel = () => ({ type: TOGGLE_LABEL_SIZE });
 export const getSearchInput = (input) => ({ type: GET_SEARCH_INPUT, input });
 
@@ -52,4 +52,10 @@ export const toggleListMenu = (bool, column) => ({
 export const addListMenuColumn = (column) => ({
   type: ADD_LIST_MENU_COLUMN,
   column,
+});
+
+export const getScrollHeight = (columnId, scrollTop) => ({
+  type: GET_SCROLL_HEIGHT,
+  columnId,
+  scrollTop,
 });

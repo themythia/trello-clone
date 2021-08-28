@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, forwardRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { toggleAddCard, addListMenuColumn } from '../actions/menu';
 import {
   copyList,
@@ -10,14 +10,30 @@ import {
 } from '../actions/data';
 import { IoClose } from 'react-icons/io5';
 import { AiOutlineLeft } from 'react-icons/ai';
+import ID from '../utils/generateId';
 
 const ListMenu = (props, ref) => {
   const { column, index } = props;
   const dispatch = useDispatch();
-  const showMenu = useSelector(
-    (store) => store.data.demo.columns[column.id].showMenu
-  );
   const [menuState, setMenuState] = useState('menu');
+
+  const add = () => {
+    dispatch(toggleAddCard(true, column.id));
+    dispatch(toggleListMenu(false, column));
+  };
+
+  const copy = () => {
+    const id = ID();
+    dispatch(copyList(column, index, id));
+    dispatch(toggleListMenu(false, column));
+    dispatch(addListMenuColumn(column));
+  };
+
+  const deleteCards = () => {
+    dispatch(deleteAllCards(column));
+    dispatch(toggleListMenu(false, column));
+  };
+
   return (
     <div className='list-menu-div' ref={ref}>
       <div className='list-menu-header'>
@@ -31,30 +47,16 @@ const ListMenu = (props, ref) => {
         <span>{menuState === 'sort' ? `Sort List` : `List actions`}</span>
         <IoClose
           className='list-menu-icon'
-          // onClick={() => setMenuShow(false)}
           onClick={() => dispatch(toggleListMenu(false, column))}
         />
       </div>
       <div className='list-menu-main'>
         {menuState === 'menu' ? (
           <React.Fragment>
-            <span
-              className='list-menu-item'
-              onClick={() => {
-                dispatch(toggleAddCard(true, column.id));
-                dispatch(toggleListMenu(false, column));
-              }}
-            >
+            <span className='list-menu-item' onClick={add}>
               Add card...
             </span>
-            <span
-              className='list-menu-item'
-              onClick={() => {
-                dispatch(copyList(column, index));
-                dispatch(toggleListMenu(false, column));
-                dispatch(addListMenuColumn(column));
-              }}
-            >
+            <span className='list-menu-item' onClick={copy}>
               Copy list...
             </span>
             <span
@@ -63,13 +65,7 @@ const ListMenu = (props, ref) => {
             >
               Sort by...
             </span>
-            <span
-              onClick={() => {
-                dispatch(deleteAllCards(column));
-                dispatch(toggleListMenu(false, column));
-              }}
-              className='list-menu-item'
-            >
+            <span onClick={deleteCards} className='list-menu-item'>
               Delete all cards in this list
             </span>
             <span
@@ -107,5 +103,6 @@ const ListMenu = (props, ref) => {
   );
 };
 
-const forwardedListMenu = React.forwardRef(ListMenu);
+// using forwardRef to access ListMenu in List component
+const forwardedListMenu = forwardRef(ListMenu);
 export default forwardedListMenu;

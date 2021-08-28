@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { handleNewList } from '../actions/data';
 import { BiPlus } from 'react-icons/bi';
 import { IoClose } from 'react-icons/io5';
+import ID from '../utils/generateId';
 
 const NewList = () => {
   const [show, setShow] = useState(false);
@@ -15,8 +16,9 @@ const NewList = () => {
   // resets textInput value,
   // focuses textInput for next input
   const addNewList = () => {
+    const id = ID();
     if (input.length > 0) {
-      dispatch(handleNewList(input));
+      dispatch(handleNewList(input, id));
       setInput('');
       textInput.current.focus();
     }

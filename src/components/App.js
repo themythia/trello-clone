@@ -141,7 +141,7 @@ const App = () => {
           >
             {data.columnOrder.map((columnId, index) => {
               const column = data.columns[columnId];
-              const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+              const tasks = column?.taskIds.map((taskId) => data.tasks[taskId]);
               return (
                 <List
                   key={column.id}
