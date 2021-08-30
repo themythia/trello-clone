@@ -19,12 +19,12 @@ const CardModal = ({ show, onClose, task, column }) => {
   const textarea = useRef(null);
 
   const position = useSelector((store) => store.menu.tasks[task.id].position);
-  const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+  const type = useSelector((store) => store.data.tasks[task.id].menuType);
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
   const showModalMenu = useSelector(
-    (store) => store.data.demo.tasks[task.id].showCardModalMenu
+    (store) => store.data.tasks[task.id].showCardModalMenu
   );
 
   const scrollTop = useSelector((store) => store.menu[column.id].scrollTop);

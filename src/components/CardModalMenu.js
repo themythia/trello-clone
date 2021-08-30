@@ -112,7 +112,7 @@ const CardModalMenu = ({ onClose, task }) => {
   const searchInputRef = useRef(null);
 
   // const type = useSelector((store) => store.menu.tasks[task.id].menuType);
-  const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+  const type = useSelector((store) => store.data.tasks[task.id].menuType);
 
   const [input, setInput] = useState(editLabel?.name ? editLabel.name : '');
   const colors = [

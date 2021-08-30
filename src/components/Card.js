@@ -41,11 +41,9 @@ const Card = ({ task, index, column }) => {
     store.labels.find((label) => label.edit === true)
   );
   const showCardModal = useSelector(
-    (store) => store.data.demo.tasks[task.id].showCardModal
+    (store) => store.data.tasks[task.id].showCardModal
   );
-  const taskLabels = useSelector(
-    (store) => store.data.demo.tasks[task.id].labels
-  );
+  const taskLabels = useSelector((store) => store.data.tasks[task.id].labels);
   const labels = useSelector((store) => store.labels);
 
   // gets position of card relative to viewport

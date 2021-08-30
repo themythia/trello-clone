@@ -15,7 +15,7 @@ const List = ({ column, tasks, index }) => {
   const listMenu = useRef(null);
 
   const showMenu = useSelector(
-    (store) => store.data.demo.columns[column.id].showMenu
+    (store) => store.data.columns[column.id].showMenu
   );
 
   // for optimizing purposes
