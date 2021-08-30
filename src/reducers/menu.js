@@ -8,6 +8,7 @@ import {
   TOGGLE_LIST_MENU,
   ADD_LIST_MENU_COLUMN,
   GET_SCROLL_HEIGHT,
+  DELETE_TASK_FROM_MENU,
 } from '../actions/menu';
 const defaultState = {
   tasks: {
@@ -118,6 +119,13 @@ const menu = (state = defaultState, action) => {
           ...state[action.columnId],
           scrollTop: action.scrollTop,
         },
+      };
+    case DELETE_TASK_FROM_MENU:
+      const copiedMenuTasks = Object.assign({}, state.tasks);
+      delete copiedMenuTasks[action.taskId];
+      return {
+        ...state,
+        tasks: copiedMenuTasks,
       };
     default:
       return state;

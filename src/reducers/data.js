@@ -21,13 +21,12 @@ import {
 } from '../actions/data';
 import ID from '../utils/generateId';
 
-const data = (
-  state = {
-    demo: {},
-    new: { tasks: {}, columns: {}, columnOrder: [], taskCount: 0 },
-  },
-  action
-) => {
+const defaultState = {
+  demo: {},
+  new: { tasks: {}, columns: {}, columnOrder: [], taskCount: 0 },
+};
+
+const data = (state = defaultState, action) => {
   switch (action.type) {
     case RECEIVE_INITIAL_DATA:
       return {
@@ -418,7 +417,6 @@ const data = (
         },
       };
     case TOGGLE_LIST_MENU:
-      console.log('logger:', action.log);
       return {
         ...state,
         demo: {

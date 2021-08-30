@@ -1,6 +1,10 @@
 import React, { useState, forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { toggleAddCard, addListMenuColumn } from '../actions/menu';
+import {
+  toggleAddCard,
+  addListMenuColumn,
+  deleteTaskFromMenu,
+} from '../actions/menu';
 import {
   copyList,
   deleteAllCards,
@@ -30,6 +34,7 @@ const ListMenu = (props, ref) => {
   };
 
   const deleteCards = () => {
+    column.taskIds.forEach((taskId) => dispatch(deleteTaskFromMenu(taskId)));
     dispatch(deleteAllCards(column));
     dispatch(toggleListMenu(false, column));
   };

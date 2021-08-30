@@ -11,6 +11,7 @@ import {
 } from '../actions/data';
 import { toggleEditLabel } from '../actions/labels';
 import ID from '../utils/generateId';
+import { deleteTaskFromMenu } from '../actions/menu';
 
 const CardModal = ({ show, onClose, task, column }) => {
   const dispatch = useDispatch();
@@ -152,6 +153,7 @@ const CardModal = ({ show, onClose, task, column }) => {
           </button>
           <button
             onClick={() => {
+              dispatch(deleteTaskFromMenu(task.id));
               dispatch(deleteCard(task, column));
             }}
             className='side-btn'
