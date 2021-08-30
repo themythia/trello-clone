@@ -16,7 +16,7 @@ import {
   editLabel as editLabelFunc,
   createLabel,
 } from '../actions/labels';
-import { getSearchInput, toggleCardModalMenu } from '../actions/menu';
+import { getSearchInput } from '../actions/menu';
 import ID from '../utils/generateId';
 
 const LabelCard = styled.div`
@@ -62,45 +62,7 @@ const LabelColorPicker = styled.span`
   }
 `;
 
-const SizeBtn = styled.div`
-  border-radius: 4px;
-  border: 1px solid lightgrey;
-  height: 64px;
-  width: 136px;
-  display: flex;
-  flex-direction: column;
-  display: relative;
-  z-index: 1;
-`;
-
-const SizeBtnTop = styled.div`
-  height: ${(props) => (props.size === 'small' ? '28px' : '100%')};
-  position: relative;
-  z-index: ${(props) => (props.size === 'small' ? '1' : '-10')};
-  background: ${(props) => (props.bg === null ? 'lightgrey' : props.bg)};
-`;
-const SizeBtnBottom = styled.div`
-  padding: 6px 4px 4px 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-// const LongRow = styled.div`
-//   height: 4px;
-//   width: 122px;
-//   margin-right: 4px;
-//   background: ${(props) => (props.bg === null ? 'lightgrey' : '#6B778C')};
-//   border-radius: 4px;
-// `;
-// const ShortRow = styled.div`
-//   height: 4px;
-//   width: 98px;
-//   background: ${(props) => (props.bg === null ? 'lightgrey' : '#6B778C')};
-//   border-radius: 4px;
-//   margin-bottom: 6px;
-// `;
-
-const CardModalMenu = ({ onClose, task }) => {
+const CardModalMenu = ({ onClose, task, windowSize, position }) => {
   const dispatch = useDispatch();
   const labels = useSelector((store) => store.labels);
   const [colorSelected, setColorSelected] = useState(null);
@@ -133,10 +95,18 @@ const CardModalMenu = ({ onClose, task }) => {
       setColorSelected(editLabel.color);
     }
   }, [editLabel, colorSelected]);
-  console.log('colorSelected', colorSelected);
+
+  // repositions the menu if menu overflows the y axis of window
+  const menuPosition = () => {
+    let top = 1;
+    if (position.top + 460 > windowSize.height) {
+      top = windowSize.height - (position.top + 468);
+    }
+    return top;
+  };
 
   return (
-    <div className='card-modal-menu-div'>
+    <div className='card-modal-menu-div' style={{ top: menuPosition() }}>
       {type === 'label' && (
         <React.Fragment>
           <div className='card-modal-menu-header'>
@@ -156,7 +126,6 @@ const CardModalMenu = ({ onClose, task }) => {
             />
             <h6>LABELS</h6>
             <ul>
-              {/* {labels.filter((label) => regex.test(label.content))} */}
               {labels
                 .filter((label) => regex.test(label.name) === true)
                 .map((label, index) => (
@@ -214,9 +183,6 @@ const CardModalMenu = ({ onClose, task }) => {
                 if (type === 'edit-label') {
                   dispatch(toggleEditLabel(editLabel.id, false));
                 }
-                // if (type === 'cover') {
-                //   dispatch(toggleCardModalMenu(false, task));
-                // }
                 dispatch(changeCardModalMenuType(task, 'label'));
               }}
               className='card-modal-menu-icon'
@@ -246,34 +212,6 @@ const CardModalMenu = ({ onClose, task }) => {
                 />
               </React.Fragment>
             )}
-            {/* {type === 'cover' && (
-              <React.Fragment>
-                <h6>SIZE</h6>
-                <div className='size-btn-div'>
-                  <div className='size-btn size-btn-sm'>
-                    <SizeBtnTop bg={colorSelected} size='small' />
-                    <div className='bottom'>
-                      <div className='row-long'></div>
-                      <div className='row-short'></div>
-                      <div className='row-3'>
-                        <div className='left'>
-                          <div></div>
-                          <div></div>
-                        </div>
-                        <div className='right'></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='size-btn size-btn-full'>
-                    <SizeBtnTop bg={colorSelected} size='full' />
-                    <div className='row-div'>
-                      <div className='row-long'></div>
-                      <div className='row-short'></div>
-                    </div>
-                  </div>
-                </div>
-              </React.Fragment>
-            )} */}
             <h6>Select a color</h6>
             <div className='color-select-div'>
               {colors.map((color, index) => (
@@ -298,15 +236,17 @@ const CardModalMenu = ({ onClose, task }) => {
                       );
                     }
                     if (type === 'create-label') {
-                      const id = ID();
-                      dispatch(
-                        createLabel({
-                          id,
-                          name: input,
-                          color: colorSelected,
-                          edit: false,
-                        })
-                      );
+                      if (colorSelected !== null) {
+                        const id = ID();
+                        dispatch(
+                          createLabel({
+                            id,
+                            name: input,
+                            color: colorSelected,
+                            edit: false,
+                          })
+                        );
+                      }
                     }
                     dispatch(changeCardModalMenuType(task, 'label'));
                   }
