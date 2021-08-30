@@ -171,18 +171,35 @@ const data = (
       };
 
     case SORT_LIST:
-      console.log('action.column', action.column);
       let newTaskIds = state.demo.columns[action.column.id].taskIds.slice();
-      const sorted = newTaskIds.map((taskId) => state.demo.tasks[taskId].time);
 
-      //sorting big numbers
-      console.log(
-        'sorted',
-        // eslint-disable-next-line no-undef
-        sorted.sort((a, b) =>
-          BigInt(b) > BigInt(a) ? 1 : BigInt(b) < BigInt(a) ? -1 : 0
-        )
-      );
+      const { tasks } = state.demo;
+      const sortNewest = () =>
+        newTaskIds.sort((a, b) =>
+          BigInt(tasks[b].time) > BigInt(tasks[a].time)
+            ? 1
+            : BigInt(tasks[b].time) < BigInt(tasks[a].time)
+            ? -1
+            : 0
+        );
+      const sortOldest = () =>
+        newTaskIds.sort((a, b) =>
+          BigInt(tasks[b].time) > BigInt(tasks[a].time)
+            ? -1
+            : BigInt(tasks[b].time) < BigInt(tasks[a].time)
+            ? 1
+            : 0
+        );
+
+      const sortAbc = () =>
+        newTaskIds.sort((a, b) =>
+          tasks[a].content < tasks[b].content
+            ? -1
+            : tasks[a].content > tasks[b].content
+            ? 1
+            : 0
+        );
+
       return {
         ...state,
         demo: {
@@ -193,28 +210,11 @@ const data = (
               ...state.demo.columns[action.column.id],
               taskIds:
                 action.sortType === 'newest'
-                  ? newTaskIds.sort(
-                      (a, b) =>
-                        state.demo.tasks[a].time - state.demo.tasks[b].time
-                    )
+                  ? sortNewest()
                   : action.sortType === 'oldest'
-                  ? newTaskIds.sort(
-                      (a, b) =>
-                        state.demo.tasks[b].time - state.demo.tasks[a].time
-                    )
+                  ? sortOldest()
                   : action.sortType === 'abc'
-                  ? newTaskIds.sort(function (a, b) {
-                      if (
-                        state.demo.tasks[a].content <
-                        state.demo.tasks[b].content
-                      ) {
-                        return -1;
-                      }
-                      if (a.firstname > b.firstname) {
-                        return 1;
-                      }
-                      return 0;
-                    })
+                  ? sortAbc()
                   : newTaskIds,
             },
           },
