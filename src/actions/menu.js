@@ -8,6 +8,7 @@ export const GET_SEARCH_INPUT = 'GET_SEARCH_INPUT';
 export const TOGGLE_LIST_MENU = 'TOGGLE_LIST_MENU';
 export const ADD_LIST_MENU_COLUMN = 'ADD_LIST_MENU_COLUMN';
 export const GET_SCROLL_HEIGHT = 'GET_SCROLL_HEIGHT';
+export const DELETE_TASK_FROM_MENU = 'DELETE_TASK_FROM_MENU';
 
 export const toggleAddCard = (bool, column) => ({
   type: TOGGLE_ADD_CARD,
@@ -58,4 +59,10 @@ export const getScrollHeight = (columnId, scrollTop) => ({
   type: GET_SCROLL_HEIGHT,
   columnId,
   scrollTop,
+});
+
+// deletes task from menu.tasks when card deleted
+export const deleteTaskFromMenu = (taskId) => ({
+  type: DELETE_TASK_FROM_MENU,
+  taskId,
 });

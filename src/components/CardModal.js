@@ -11,6 +11,7 @@ import {
 } from '../actions/data';
 import { toggleEditLabel } from '../actions/labels';
 import ID from '../utils/generateId';
+import { deleteTaskFromMenu } from '../actions/menu';
 
 const CardModal = ({ show, onClose, task, column }) => {
   const dispatch = useDispatch();
@@ -18,12 +19,12 @@ const CardModal = ({ show, onClose, task, column }) => {
   const textarea = useRef(null);
 
   const position = useSelector((store) => store.menu.tasks[task.id].position);
-  const type = useSelector((store) => store.data.demo.tasks[task.id].menuType);
+  const type = useSelector((store) => store.data.tasks[task.id].menuType);
   const editLabel = useSelector((store) =>
     store.labels.find((label) => label.edit === true)
   );
   const showModalMenu = useSelector(
-    (store) => store.data.demo.tasks[task.id].showCardModalMenu
+    (store) => store.data.tasks[task.id].showCardModalMenu
   );
 
   const scrollTop = useSelector((store) => store.menu[column.id].scrollTop);
@@ -41,7 +42,7 @@ const CardModal = ({ show, onClose, task, column }) => {
     };
   }, []);
 
-  const modalPosition = () => {
+const modalPosition = () => {
     let top = position?.top;
     let left = position?.left;
 
@@ -54,6 +55,9 @@ const CardModal = ({ show, onClose, task, column }) => {
 
     if (position?.left > windowSize.width) {
       left = windowSize.width;
+    }
+    if (position?.left < 0) {
+      left = 26;
     }
     if (position?.left + 354 > windowSize.width) {
       left = windowSize.width - 354;
@@ -100,14 +104,6 @@ const CardModal = ({ show, onClose, task, column }) => {
           </button>
         </div>
         <div className='right'>
-          {/* <button
-            onClick={() => {
-              dispatch(toggleCardModalMenu(true, task, 'card'));
-            }}
-            className='side-btn'
-          >
-            <BsCardText size={16} className='side-btn-icon' /> Open card
-          </button> */}
           <button
             onClick={() => {
               dispatch(toggleCardModalMenu(true, task, 'label'));
@@ -116,14 +112,6 @@ const CardModal = ({ show, onClose, task, column }) => {
           >
             <BsFillTagFill size={16} className='side-btn-icon' /> Edit labels
           </button>
-          {/* <button
-            onClick={() => {
-              dispatch(toggleCardModalMenu(true, task, 'cover'));
-            }}
-            className='side-btn'
-          >
-            <BsCardImage size={16} className='side-btn-icon' /> Change cover
-          </button> */}
           <button
             onClick={() => {
               const id = ID();
@@ -136,6 +124,7 @@ const CardModal = ({ show, onClose, task, column }) => {
           </button>
           <button
             onClick={() => {
+              dispatch(deleteTaskFromMenu(task.id));
               dispatch(deleteCard(task, column));
             }}
             className='side-btn'
@@ -150,6 +139,8 @@ const CardModal = ({ show, onClose, task, column }) => {
               dispatch(toggleCardModalMenu(false, task));
             }}
             task={task}
+            windowSize={windowSize}
+            position={modalPosition()}
           />
         )}
       </div>
