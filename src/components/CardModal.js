@@ -42,7 +42,7 @@ const CardModal = ({ show, onClose, task, column }) => {
     };
   }, []);
 
-  const modalPosition = () => {
+const modalPosition = () => {
     let top = position?.top;
     let left = position?.left;
 

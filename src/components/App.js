@@ -10,7 +10,7 @@ import { getInitialData, updateData } from '../actions/data';
 const App = () => {
   const dispatch = useDispatch();
   const data = useSelector((store) => store.data);
-
+  
   useEffect(() => {
     dispatch(getInitialData(initialData));
   }, [dispatch]);

@@ -104,7 +104,7 @@ const CardModalMenu = ({ onClose, task, windowSize, position }) => {
     }
     return top;
   };
-
+  
   return (
     <div className='card-modal-menu-div' style={{ top: menuPosition() }}>
       {type === 'label' && (
