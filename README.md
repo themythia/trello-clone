@@ -4,7 +4,7 @@
 
 A Front-end clone of Trello built with React and Redux.
 
-[Live demo](https://emir.al/trello-clone)
+[Live demo](https://trello-clone-delta-fawn.vercel.app/)
 
 ## Features
 
